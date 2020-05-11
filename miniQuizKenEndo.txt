@@ -1,0 +1,29 @@
+1-What is the HTML5 element that shows line break opportunity.
+-(correct)Wbr
+-Br
+-Nextline
+-Hr
+
+2-What is the HTML5 element that is typically used for encryption and generates a public-private key pair.
+-Private
+-(correct)Keygen
+-Embed
+-Encryption
+
+3-Which one is the correct way to write <a> so that it opens new window when clicked.
+-<A href = “url” target = “new_window” />
+-<A href = “url” target = “new” />
+-(correct)<A href = “url” target = “_blank” />
+-None of the above
+
+4-Where would you create a cache profile as an alternative to configuring output cache properties.
+-(correct) web.config file
+-Program.cs
+-Startup.cs
+-Properties
+
+5-What attribute do you use to prevent a public method from being invoked in a controller class
+-<PreventAction>
+-(correct) <NonAction>
+-<Void>
+-None of the above
