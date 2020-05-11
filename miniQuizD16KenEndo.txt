@@ -1,0 +1,31 @@
+1-What is a disadvantage to the waterfall model
+- The more time spent early in the software production cycle can increase costs at later stages
+- Places emphasis on documentation as well as source code.
+- provide an unstructured approach
+- (correct)Client may not know exactly what their requirements are before they see working software and so change their requirement, leading to redesign, redevelopment, and retesting.
+
+2-Why is spiral model called meta model?
+- It provides informational data of the project
+- It is a unique model that is independent of other models
+- (correct)It subsumes all the other SDLC models
+- It is part of the waterfall model
+
+3-What is the benefit of user story?
+- gives the template to the whole project
+- (correct)This template serves as “training wheels”, reminding people in conversation about user stories to 
+pay attention not just to “what” the desired software product is to do, but also “for whom” it does it and in pursuit of “what objectives”.
+- the basis of a sprint
+- fundamental template used in every model for SDLC, gives team an idea of what clients want.
+
+4-What is a backlog in agile development
+- The time frame in which the work must be completed
+- the team discusses top priority user stories and decides what can be delivered in the sprint
+- (correct) A list of set tasks that must be completed before the product is released
+- record of all the task done daily
+
+5-What is a blocker in agile development
+- (correct) Anything that stops or slows down the delivery of a product, or acts as a hurdle for the
+product
+- Someone who makes usre that each user stories are done executed correctly.
+- The practice of merging all developers working copies to a shared master several times a day.
+- Deliberately blocking anothers code path to slow its progress.
