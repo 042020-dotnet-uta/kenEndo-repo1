@@ -14,7 +14,7 @@
 -<A href = “url” target = “new_window” />
 -<A href = “url” target = “new” />
 -(correct)<A href = “url” target = “_blank” />
--None of the above
+-<A href = "url" new />
 
 4-Where would you create a cache profile as an alternative to configuring output cache properties.
 -(correct) web.config file
@@ -26,4 +26,4 @@
 -<PreventAction>
 -(correct) <NonAction>
 -<Void>
--None of the above
+-<action>
