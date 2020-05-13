@@ -52,24 +52,24 @@ namespace Project1.Data
         public IEnumerable<UserOrder> GetAllOrderByLocation(Domain.StoreLocation storeLocation)
         {
             return _context.UserOrders
-                .Where(x => x.StoreLocation == storeLocation);
+                .Where(x => x.StoreLocation == storeLocation).ToList();
         }
         //displays all order placed by a user
         public IEnumerable<UserOrder> GetAllOrderByUser(UserInfo userInfo)
         {
             return _context.UserOrders
-                .Where(x => x.UserInfo == userInfo);
+                .Where(x => x.UserInfo == userInfo).ToList();
         }
         //displays all item at a selected location
         public IEnumerable<StoreItem> GetAllStoreItems(Domain.StoreLocation storeLocation)
         {
             return _context.StoreItems.Include(x => x.StoreLocation)
-                .Where(x => x.StoreLocation == storeLocation);
+                .Where(x => x.StoreLocation == storeLocation).ToList();
         }
         //displays all store locations
         public IEnumerable<Domain.StoreLocation> GetAllStoreLocations()
         {
-            return _context.StoreLocations;
+            return _context.StoreLocations.ToList();
         }
     }
 }

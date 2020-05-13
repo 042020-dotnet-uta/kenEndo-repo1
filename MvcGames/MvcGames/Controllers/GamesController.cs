@@ -39,7 +39,7 @@ namespace MvcGames.Controllers
                 Locations = new SelectList(await locationQuery.ToListAsync()),
                 Games = await gameTitle.ToListAsync()
             };
-            return View();
+            return View(locationGamesView);
         }
 
         // GET: Games/Details/5

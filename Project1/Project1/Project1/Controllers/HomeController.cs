@@ -27,9 +27,26 @@ namespace Project1.Controllers
         {
             return View();
         }
+        //Displays all locations
         public IActionResult Location()
         {
-            return View(_repository.GetAllStoreLocations().ToList());
+            return View(_repository.GetAllStoreLocations());
+        }
+        public IActionResult Items(int? id)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+            //stores all store items from a location into the items field
+            var items = _repository.GetAllStoreItems(_repository
+                .GetAllStoreLocations().First(x => x.StoreLocationId == id));
+            if(items == null)
+            {
+                return NotFound();
+            }
+
+            return View(items);
         }
         public IActionResult Privacy()
         {

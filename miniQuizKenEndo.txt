@@ -1,4 +1,4 @@
-1-What is the HTML5 element that shows line break opportunity.
+1-What is the HTML5 element that shows word break opportunity.
 -(correct)Wbr
 -Br
 -Nextline
