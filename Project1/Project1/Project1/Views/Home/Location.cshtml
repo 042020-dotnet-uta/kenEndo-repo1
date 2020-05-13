@@ -1,0 +1,29 @@
+﻿@model IEnumerable<Project1.Domain.StoreLocation>
+@{
+    ViewData["Title"] = "Location";
+}
+
+<h1>Location</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Location)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Location)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
