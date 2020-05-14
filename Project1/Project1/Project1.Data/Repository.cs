@@ -37,7 +37,6 @@ namespace Project1.Data
                 orderQuantity = orderQuantity
             };
         }
-
         //Adds new user to the database
         public void AddNewUser(UserInfo userInfo)
         {            
@@ -48,11 +47,22 @@ namespace Project1.Data
             _context.Add(userInfo);
             _context.SaveChanges();
         }
-        //displays all order placed from a location
-        public IEnumerable<UserOrder> GetAllOrderByLocation(Domain.StoreLocation storeLocation)
+        //checks if user exists in the database for user login
+        public UserInfo CheckUser(UserInfo userInfo)
         {
-            return _context.UserOrders
-                .Where(x => x.StoreLocation == storeLocation).ToList();
+            var obj = _context.UserInfos.Where(x => x.userName
+            .Equals(userInfo.userName) && x.password.Equals(userInfo.password)).FirstOrDefault();
+            return obj;
+        }
+        //displays all order placed from a location
+        public IEnumerable<UserOrder> GetAllOrderByLocation(string storeLocation)
+        {
+
+                return _context.UserOrders.Include(x=>x.UserOrderQuantity)
+                .Include(x=>x.UserOrderItems).ThenInclude(x=>x.StoreItem)
+                    .Where(x => x.StoreLocation.Location == storeLocation);
+            
+
         }
         //displays all order placed by a user
         public IEnumerable<UserOrder> GetAllOrderByUser(UserInfo userInfo)
@@ -69,7 +79,7 @@ namespace Project1.Data
         //displays all store locations
         public IEnumerable<Domain.StoreLocation> GetAllStoreLocations()
         {
-            return _context.StoreLocations.ToList();
+            return _context.StoreLocations;
         }
     }
 }

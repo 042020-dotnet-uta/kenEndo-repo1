@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Project1.Domain
 {
@@ -29,7 +31,8 @@ namespace Project1.Domain
 
 
 		private string _userName; //username
-
+		[DisplayName("User Name")]
+		[Required(ErrorMessage = "This field is required.")]
 		public string userName
 		{
 			get { return _userName; }
@@ -38,7 +41,9 @@ namespace Project1.Domain
 
 
 		private string _password; //password
-
+		[DisplayName("Password")]
+		[DataType(DataType.Password)]
+		[Required(ErrorMessage = "This field is required.")]
 		public string password
 		{
 			get { return _password; }

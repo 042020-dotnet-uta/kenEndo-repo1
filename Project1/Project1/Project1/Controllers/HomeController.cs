@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Project1.Data;
 using Project1.Domain;
@@ -58,5 +59,19 @@ namespace Project1.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        public IActionResult OrderHistoryByLocation(string location)
+        {
+            var locations = _repository.GetAllStoreLocations().Select(x=>x.Location);
+            var userOrderss = _repository.GetAllOrderByLocation(location);
+            OrdersByLocation order = new OrdersByLocation
+            {
+                storeLocations = new SelectList(locations.ToList()),
+                userOrders = userOrderss.ToList()
+            };
+            return View(order);
+        }
+
+
     }
 }

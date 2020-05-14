@@ -18,11 +18,12 @@ namespace Project1.Domain
         //get all order history by user
         IEnumerable<UserOrder> GetAllOrderByUser(UserInfo userInfo);
         //get all order history by location
-        IEnumerable<UserOrder> GetAllOrderByLocation(StoreLocation storeLocation);
+        IEnumerable<UserOrder> GetAllOrderByLocation(string storeLocation);
         //add new user to the database
         void AddNewUser(UserInfo userInfo);
         //add new order to the database
         void AddNewOrder(UserInfo userInfo, StoreLocation storeLocation,
             StoreItem storeItem, int orderQuantity);
+        UserInfo CheckUser(UserInfo userInfo);
     }
 }

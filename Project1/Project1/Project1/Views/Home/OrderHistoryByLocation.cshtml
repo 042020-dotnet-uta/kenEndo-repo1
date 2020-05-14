@@ -1,0 +1,52 @@
+﻿@model Project1.Models.OrdersByLocation
+
+@{
+    ViewData["Title"] = "OrderHistoryByLocation";
+}
+
+<h1>OrderHistoryByLocation</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<form asp-controller="Home" asp-action="OrderHistoryByLocation" method="get">
+    <p>
+        <select asp-for="storeLocation" asp-items="Model.storeLocations">
+            <option value="">All</option>
+        </select>
+        <input type="submit" value="Filter" />
+    </p>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.userOrders)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.storeLocation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.storeLocation)
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.userOrders)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserOrderItems)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
