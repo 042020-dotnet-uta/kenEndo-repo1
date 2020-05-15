@@ -91,9 +91,11 @@ namespace Project1.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("password")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("userName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserInfoId");
@@ -133,6 +135,9 @@ namespace Project1.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("OrderQuantity")
+                        .HasColumnType("int");
+
                     b.Property<int?>("StoreItemId")
                         .HasColumnType("int");
 
@@ -146,31 +151,6 @@ namespace Project1.Data.Migrations
                     b.HasIndex("UserOrderId");
 
                     b.ToTable("UserOrderItems");
-                });
-
-            modelBuilder.Entity("Project1.Domain.UserOrderQuantity", b =>
-                {
-                    b.Property<int>("UserOrderQuantityId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("StoreItemId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UserOrderId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("orderQuantity")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserOrderQuantityId");
-
-                    b.HasIndex("StoreItemId");
-
-                    b.HasIndex("UserOrderId");
-
-                    b.ToTable("UserOrderQuantities");
                 });
 
             modelBuilder.Entity("Project1.Domain.StoreItem", b =>
@@ -203,17 +183,6 @@ namespace Project1.Data.Migrations
 
                     b.HasOne("Project1.Domain.UserOrder", "UserOrder")
                         .WithMany("UserOrderItems")
-                        .HasForeignKey("UserOrderId");
-                });
-
-            modelBuilder.Entity("Project1.Domain.UserOrderQuantity", b =>
-                {
-                    b.HasOne("Project1.Domain.StoreItem", "StoreItem")
-                        .WithMany()
-                        .HasForeignKey("StoreItemId");
-
-                    b.HasOne("Project1.Domain.UserOrder", "UserOrder")
-                        .WithMany("UserOrderQuantity")
                         .HasForeignKey("UserOrderId");
                 });
 #pragma warning restore 612, 618

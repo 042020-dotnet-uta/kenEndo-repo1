@@ -29,12 +29,9 @@ namespace Project1.Data
             var orderItem = new UserOrderItem
             {
                 UserOrder = newOrder,
-                StoreItem = storeItem
-            };
-            var orderQuantities = new UserOrderQuantity
-            {
-                UserOrder = newOrder,
-                orderQuantity = orderQuantity
+                StoreItem = storeItem,
+                OrderQuantity = orderQuantity
+
             };
         }
         //Adds new user to the database
@@ -58,18 +55,25 @@ namespace Project1.Data
         public IEnumerable<UserOrder> GetAllOrderByLocation(string storeLocation)
         {
 
-                return _context.UserOrders.Include(x=>x.UserOrderQuantity)
+                return _context.UserOrders
                 .Include(x=>x.UserOrderItems).ThenInclude(x=>x.StoreItem)
                     .Where(x => x.StoreLocation.Location == storeLocation);
             
 
         }
         //displays all order placed by a user
-        public IEnumerable<UserOrder> GetAllOrderByUser(UserInfo userInfo)
+        public IEnumerable<UserOrder> GetAllOrderByUser(int id)
         {
             return _context.UserOrders
-                .Where(x => x.UserInfo == userInfo).ToList();
+                .Include(x => x.UserOrderItems).ThenInclude(x => x.StoreItem)
+                .Where(x => x.UserInfo.UserInfoId == id);
         }
+
+        public IEnumerable<UserOrder> GetAllOrders()
+        {
+            return _context.UserOrders;
+        }
+
         //displays all item at a selected location
         public IEnumerable<StoreItem> GetAllStoreItems(Domain.StoreLocation storeLocation)
         {
@@ -81,5 +85,55 @@ namespace Project1.Data
         {
             return _context.StoreLocations;
         }
+
+        public IEnumerable<UserInfo> GetAllUserInfo()
+        {
+            return _context.UserInfos;
+        }
+
+        public IEnumerable<UserOrder> GetOrderByOrderId(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<UserOrderItem> GetOrderItemById(int id)
+        {
+            return _context.UserOrderItems.Include(x => x.UserOrder).ThenInclude(x=>x.UserInfo)
+                .Include(x=>x.StoreItem).Where(x => x.UserOrder.UserOrderId == id);
+        }
+
+        public IEnumerable<UserInfo> GetUserInfoByFirstName(string fName)
+        {
+            IEnumerable<UserInfo> user;
+            try
+            {
+                user = _context.UserInfos.Where(x => x.fName.Contains(fName));
+                return user;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public IEnumerable<UserInfo> GetUserInfoByLastName(string lName)
+        {
+            IEnumerable<UserInfo> user;
+            try
+            {
+                user = _context.UserInfos.Where(x => x.lName.Contains(lName));
+                return user;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public IEnumerable<UserOrderItem> GetUserOrderItems(UserOrder userOrder)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

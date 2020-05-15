@@ -16,7 +16,6 @@ namespace Project1.Data
         public DbSet<StoreItem> StoreItems { get; set; }
         public DbSet<StoreItemInventory> StoreItemInventories { get; set; }
         public DbSet<UserOrder> UserOrders { get; set; }
-        public DbSet<UserOrderQuantity> UserOrderQuantities { get; set; }
         public DbSet<UserOrderItem> UserOrderItems { get; set; }
     }
 }

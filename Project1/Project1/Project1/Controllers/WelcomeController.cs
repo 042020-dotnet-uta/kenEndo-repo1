@@ -50,6 +50,9 @@ namespace Project1.Controllers
             {
                 try
                 {
+                    //converts username to lowercase for name search purpose
+                    userinfo.fName = userinfo.fName.ToLower();
+                    userinfo.lName = userinfo.lName.ToLower();
                     //function to add new user to the database
                     _repository.AddNewUser(userinfo);
                     //redirects user to the login page-----------------------------

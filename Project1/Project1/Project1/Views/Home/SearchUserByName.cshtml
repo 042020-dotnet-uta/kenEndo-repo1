@@ -1,0 +1,46 @@
+﻿@model Project1.Models.SearchUserByNameModel
+
+@{
+    ViewData["Title"] = "Search User";
+}
+
+<h1>OrderHistoryByUser</h1>
+
+<form asp-controller="Home" asp-action="SearchUserByName" method="get">
+    <p>
+        First Name: <input type="text" asp-for="firstName" />
+        Last Name: <input type="text" asp-for="lastName" />
+        <input type="submit" value="Filter" />
+    </p>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.firstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.lastName)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in Model.userInfos)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.fName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.lName)
+            </td>
+            <td>
+                <a asp-action="OrderHistoryByUser" asp-route-id="@item.UserInfoId">Details</a>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>

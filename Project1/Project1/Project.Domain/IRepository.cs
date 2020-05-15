@@ -16,9 +16,17 @@ namespace Project1.Domain
         //get all store item by location
         IEnumerable<StoreItem> GetAllStoreItems(StoreLocation storeLocation);
         //get all order history by user
-        IEnumerable<UserOrder> GetAllOrderByUser(UserInfo userInfo);
+        IEnumerable<UserOrder> GetAllOrderByUser(int id);
         //get all order history by location
         IEnumerable<UserOrder> GetAllOrderByLocation(string storeLocation);
+        IEnumerable<UserOrder> GetAllOrders();
+        IEnumerable<UserOrder> GetOrderByOrderId(int id);
+        IEnumerable<UserOrderItem> GetOrderItemById(int id);
+        IEnumerable<UserOrderItem> GetUserOrderItems(UserOrder userOrder);
+
+        IEnumerable<UserInfo> GetUserInfoByFirstName(string fName);
+        IEnumerable<UserInfo> GetUserInfoByLastName(string lName);
+        IEnumerable<UserInfo> GetAllUserInfo();
         //add new user to the database
         void AddNewUser(UserInfo userInfo);
         //add new order to the database

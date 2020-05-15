@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Project1.Data.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class initialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -41,8 +41,8 @@ namespace Project1.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     fName = table.Column<string>(nullable: true),
                     lName = table.Column<string>(nullable: true),
-                    userName = table.Column<string>(nullable: true),
-                    password = table.Column<string>(nullable: true)
+                    userName = table.Column<string>(nullable: false),
+                    password = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -111,7 +111,8 @@ namespace Project1.Data.Migrations
                     UserOrderItemId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     StoreItemId = table.Column<int>(nullable: true),
-                    UserOrderId = table.Column<int>(nullable: true)
+                    UserOrderId = table.Column<int>(nullable: true),
+                    OrderQuantity = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -124,33 +125,6 @@ namespace Project1.Data.Migrations
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_UserOrderItems_UserOrders_UserOrderId",
-                        column: x => x.UserOrderId,
-                        principalTable: "UserOrders",
-                        principalColumn: "UserOrderId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserOrderQuantities",
-                columns: table => new
-                {
-                    UserOrderQuantityId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserOrderId = table.Column<int>(nullable: true),
-                    StoreItemId = table.Column<int>(nullable: true),
-                    orderQuantity = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserOrderQuantities", x => x.UserOrderQuantityId);
-                    table.ForeignKey(
-                        name: "FK_UserOrderQuantities_StoreItems_StoreItemId",
-                        column: x => x.StoreItemId,
-                        principalTable: "StoreItems",
-                        principalColumn: "StoreItemId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_UserOrderQuantities_UserOrders_UserOrderId",
                         column: x => x.UserOrderId,
                         principalTable: "UserOrders",
                         principalColumn: "UserOrderId",
@@ -178,16 +152,6 @@ namespace Project1.Data.Migrations
                 column: "UserOrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserOrderQuantities_StoreItemId",
-                table: "UserOrderQuantities",
-                column: "StoreItemId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserOrderQuantities_UserOrderId",
-                table: "UserOrderQuantities",
-                column: "UserOrderId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_UserOrders_StoreLocationId",
                 table: "UserOrders",
                 column: "StoreLocationId");
@@ -202,9 +166,6 @@ namespace Project1.Data.Migrations
         {
             migrationBuilder.DropTable(
                 name: "UserOrderItems");
-
-            migrationBuilder.DropTable(
-                name: "UserOrderQuantities");
 
             migrationBuilder.DropTable(
                 name: "StoreItems");

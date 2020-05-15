@@ -46,7 +46,6 @@ namespace Project1.Controllers
             {
                 return NotFound();
             }
-
             return View(items);
         }
         public IActionResult Privacy()
@@ -59,19 +58,61 @@ namespace Project1.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-
+        //view to list all orders by location with filter
         public IActionResult OrderHistoryByLocation(string location)
         {
             var locations = _repository.GetAllStoreLocations().Select(x=>x.Location);
-            var userOrderss = _repository.GetAllOrderByLocation(location);
-            OrdersByLocation order = new OrdersByLocation
+            var userOrderss = _repository.GetAllOrders();
+            if (!string.IsNullOrEmpty(location))
+            {
+                userOrderss = _repository.GetAllOrderByLocation(location);
+            }
+            OrdersByLocationModel order = new OrdersByLocationModel
             {
                 storeLocations = new SelectList(locations.ToList()),
                 userOrders = userOrderss.ToList()
             };
             return View(order);
         }
-
-
+        //displays the details of an order for both 'OrderHistoryByLocation' and 
+        //'OrderHistoryByUser'. displays item, quantity, time, and username.
+        public IActionResult OrderDetails(int id)
+        {
+            IEnumerable<UserOrderItem> userOrder = _repository.GetOrderItemById(id);
+            return View(userOrder);
+        }
+        
+        //searches user by first name, last name or together.
+        //view displays a page with no user displayed, once a parameter is entered
+        //and filter clicked, the correct filtered names appears
+        public IActionResult SearchUserByName(string firstName, string lastName)
+        {
+            var name = _repository.GetAllUserInfo();
+            SearchUserByNameModel userOrder = new SearchUserByNameModel();
+            if (string.IsNullOrEmpty(firstName) && string.IsNullOrEmpty(lastName))
+            {
+                name = name.Where(x => x.fName.Contains("0"));
+                userOrder.userInfos = name.ToList();
+                return View(userOrder);
+            }
+            if (!string.IsNullOrEmpty(firstName))
+            {
+                name = name.Where(x=>x.fName.Contains(firstName.ToLower()));
+            }
+            if (!string.IsNullOrEmpty(lastName))
+            {
+                name = name.Where(x => x.lName.Contains(lastName.ToLower()));
+            }
+            userOrder.userInfos = name.ToList();
+            return View(userOrder);
+        }
+        //once user is selected from 'SearchUserByName' they are directed here
+        //to show all their orders
+        public IActionResult OrderHistoryByUser(int id)
+        {
+            var userOrders = _repository.GetAllOrderByUser(id);
+            return View(userOrders);
+        }
+      
     }
 }

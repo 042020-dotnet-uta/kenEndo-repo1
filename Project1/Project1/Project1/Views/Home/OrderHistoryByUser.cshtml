@@ -1,35 +1,26 @@
-﻿@model Project1.Models.OrdersByLocationModel
+﻿@model IEnumerable<Project1.Domain.UserOrder>
 
 @{
     ViewData["Title"] = "Order History";
 }
 
-<h1>OrderHistoryByLocation</h1>
+<h1>User Order History</h1>
 
-</p>
-<form asp-controller="Home" asp-action="OrderHistoryByLocation" method="get">
-    <p>
-        <select asp-for="location" asp-items="Model.storeLocations">
-            <option value="">All</option>
-        </select>
-        <input type="submit" value="Filter" />
-    </p>
-</form>
 
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.userOrders[0].UserOrderId)
+                @Html.DisplayNameFor(model => model.UserOrderId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.userOrders[0].timeStamp)
+                @Html.DisplayNameFor(model => model.timeStamp)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.userOrders)
+        @foreach (var item in Model)
         {
             <tr>
                 <td>

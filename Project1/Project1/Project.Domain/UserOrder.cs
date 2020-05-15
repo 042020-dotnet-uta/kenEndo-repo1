@@ -16,8 +16,6 @@ namespace Project1.Domain
 
         public virtual ICollection<UserOrderItem> UserOrderItems { get; set; } //RELATION TO STOREITEM
 
-        public virtual ICollection<UserOrderQuantity> UserOrderQuantity { get; set; } //RELATION TO USERORDERQUANTITY
-
         private DateTime _timeStamp; //time stamp of order
 
         public DateTime timeStamp

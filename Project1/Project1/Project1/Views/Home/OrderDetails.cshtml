@@ -1,0 +1,63 @@
+﻿@model IEnumerable<Project1.Domain.UserOrderItem>
+
+@{
+    ViewData["Title"] = "OrderDetails";
+}
+
+<h1>OrderDetails</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.StoreItem.itemName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StoreItem.itemPrice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderQuantity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserOrder.UserInfo.fName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserOrder.UserInfo.lName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserOrder.timeStamp)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.StoreItem.itemName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StoreItem.itemPrice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderQuantity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserOrder.UserInfo.fName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserOrder.UserInfo.lName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserOrder.timeStamp)
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+<div>
+    <a asp-action="OrderHistoryByLocation">Back to Search</a>
+</div>
+
