@@ -9,22 +9,26 @@ using Project1.Domain;
 using Project1.Models;
 using System.Web;
 using Microsoft.AspNetCore.Http;
+using Project1.Domain.IRepositories;
 
 namespace Project1.Controllers
 {
     public class WelcomeController : Controller
     {
         private readonly ILogger<WelcomeController> _logger;
-        private readonly IRepository _repository;
+        private readonly IRepoUserOrder _repository;
+        private readonly IRepoUserInfo _repoUserInfo;
 
-        public WelcomeController(ILogger<WelcomeController> logger,
-            IRepository repository)
+        public WelcomeController(ILogger<WelcomeController> logger
+            ,IRepoUserOrder repository, IRepoUserInfo repoUserInfo)
         {
             _logger = logger;
             _repository = repository;
+            _repoUserInfo = repoUserInfo;
         }
         public IActionResult Index()
         {
+            HttpContext.Session.Remove("UserName");
             ViewData["Test"] = HttpContext.Session.GetString("UserName");
             return View();
         }
@@ -54,7 +58,7 @@ namespace Project1.Controllers
                     userinfo.fName = userinfo.fName.ToLower();
                     userinfo.lName = userinfo.lName.ToLower();
                     //function to add new user to the database
-                    _repository.AddNewUser(userinfo);
+                    _repoUserInfo.AddUserInfo(userinfo);
                     //redirects user to the login page-----------------------------
                     return RedirectToAction(nameof(Index));
                 }
@@ -86,7 +90,7 @@ namespace Project1.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Login([Bind("userName,password")]UserInfo userInfo)
         {
-            var x = _repository.CheckUser(userInfo);
+            var x = _repoUserInfo.CheckUserInfoToDb(userInfo);
             if (ModelState.IsValid && x!=null)
             {
                 HttpContext.Session.SetString("UserName", x.userName);

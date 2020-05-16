@@ -1,9 +1,14 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+<a style="float:right" asp-controller="Welcome" asp-action="index">Log Out</a>
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+    <a asp-action="Location">Make An Order</a><br>
+    <a asp-action="SearchUserByName">Search User By Name</a><br>
+    <a asp-action="OrderHistoryByLocation">Search Order By Location</a><br>
+
     <p>@ViewData["hello"]</p>
 </div>

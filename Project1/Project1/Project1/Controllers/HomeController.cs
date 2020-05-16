@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
-using Project1.Data;
 using Project1.Domain;
+using Project1.Domain.IRepositories;
 using Project1.Models;
 
 
@@ -17,13 +15,23 @@ namespace Project1.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IRepository _repository;
+        private readonly IRepoUserOrder _repoUserOrder;
+        private readonly IRepoStoreLocation _repoStoreLocation;
+        private readonly IRepoUserOrderItem _repoUserOrderItem;
+        private readonly IRepoStoreItem _repoStoreItem;
+        private readonly IRepoUserInfo _repoUserInfo;
 
-        public HomeController(ILogger<HomeController> logger,
-            IRepository repository)
+        public HomeController(ILogger<HomeController> logger
+            ,IRepoUserOrder repository, IRepoStoreLocation repoStoreLocation
+            ,IRepoUserOrderItem repoUserOrderItem, IRepoStoreItem repoStoreItem
+            ,IRepoUserInfo repoUserInfo)
         {
             _logger = logger;
-            _repository = repository;
+            _repoUserOrder = repository;
+            _repoStoreLocation = repoStoreLocation;
+            _repoUserOrderItem = repoUserOrderItem;
+            _repoStoreItem = repoStoreItem;
+            _repoUserInfo = repoUserInfo;
         }
 
         public IActionResult Index()
@@ -34,12 +42,12 @@ namespace Project1.Controllers
         //Displays all locations
         public IActionResult Location()
         {
-            return View(_repository.GetAllStoreLocations());
+            return View(_repoStoreLocation.GetAllStoreLocations());
         }
         public IActionResult Items(int id)
         {
             //stores all store items from a location into the items field
-            var items = _repository.GetAllStoreItemByLocation(id);
+            var items = _repoStoreItem.GetAllStoreItemByLocationId(id);
             StoreItemModel storeItem = new StoreItemModel
             {
                 storeItems = items.ToList()
@@ -50,19 +58,29 @@ namespace Project1.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Items(int id, int quantity)
         {
+            //checks to make sure user selected order quantity is below the database inventory
+            if(quantity > _repoStoreItem.GetStoreItemByStoreItemId(id).StoreItemInventory.itemInventory)
+            {
+                var orderId = HttpContext.Session.GetInt32("currentOrder");
+                ViewData["error"] = "Selected amount is more than the store inventory, please try again";
+                //need to make it so that this can direct user to view with error message displayed
+                return RedirectToAction("Items", new { id = _repoStoreLocation.GetStoreLocationFromItem(id).StoreLocationId });
+            }
             bool x = false;            
             if (HttpContext.Session.GetInt32("currentOrder")==null)
             {
                 //adds user order to the database
                 var userName = HttpContext.Session.GetString("UserName");
-                _repository.AddNewOrder(userName, id);
+                _repoUserOrder.AddUserOrder(userName, id);
+                ViewData["error"] = "";
                 //stores the order id that was just added to the database to session
-                HttpContext.Session.SetInt32("currentOrder", _repository.GetAllOrders().Last().UserOrderId);
+                HttpContext.Session.SetInt32("currentOrder", _repoUserOrder.GetAllOrders().Last().UserOrderId);
                 x = true;
             }
             //var x = HttpContext.Session.GetComplexData<List<UserOrderItem>>("listOfItems");
             if (x)
             {
+                ViewData["error"] = "";
                 var orderId = HttpContext.Session.GetInt32("currentOrder");
                 //creates a list to store all the items user order
                 List<UserOrderItemStoredList> listOfItemsOrdered = new List<UserOrderItemStoredList>();
@@ -75,10 +93,11 @@ namespace Project1.Controllers
                 };
                 listOfItemsOrdered.Add(storedList);
                 HttpContext.Session.SetComplexData("listOfItems", listOfItemsOrdered);
-                return RedirectToAction("Items", new { id=_repository.GetOrderLocationFromOrder(orderId)});
+                return RedirectToAction("Items", new { id=_repoStoreLocation.GetStoreLocationFromUserOrder(orderId).StoreLocationId});
             }
             else
             {
+                ViewData["error"] = "";
                 var orderId = HttpContext.Session.GetInt32("currentOrder");
                 List<UserOrderItemStoredList> listOfItemsOrdered = HttpContext.Session
                     .GetComplexData<List<UserOrderItemStoredList>>("listOfItems");
@@ -90,7 +109,7 @@ namespace Project1.Controllers
                 };
                 listOfItemsOrdered.Add(storedList);
                 HttpContext.Session.SetComplexData("listOfItems", listOfItemsOrdered);
-                return RedirectToAction("Items", new { id = _repository.GetOrderLocationFromOrder(orderId) });
+                return RedirectToAction("Items", new { id = _repoStoreLocation.GetStoreLocationFromUserOrder(orderId).StoreLocationId });
             }
         }
         public IActionResult Cart()
@@ -99,7 +118,7 @@ namespace Project1.Controllers
             var orderList = HttpContext.Session.GetComplexData<List<UserOrderItemStoredList>>("listOfItems");
             foreach(UserOrderItemStoredList x in orderList)
             {
-                actualOrderList.Add(_repository.ReturnNewOrderItem(x.itemId, x.orderId, x.quantity));
+                actualOrderList.Add(_repoUserOrderItem.CreateUserOrderItem(x.itemId, x.orderId, x.quantity));
             }
             return View(actualOrderList);
         }
@@ -109,38 +128,23 @@ namespace Project1.Controllers
             var orderList = HttpContext.Session.GetComplexData<List<UserOrderItemStoredList>>("listOfItems");
             foreach (UserOrderItemStoredList x in orderList)
             {
-                actualOrderList.Add(_repository.ReturnNewOrderItem(x.itemId, x.orderId, x.quantity));
+                actualOrderList.Add(_repoUserOrderItem.CreateUserOrderItem(x.itemId, x.orderId, x.quantity));
             }
-            _repository.AddOrderItemToDb(actualOrderList);
-            _repository.UpDateInventoryQuantity(actualOrderList);
+            _repoUserOrderItem.AddUserOrderItem(actualOrderList);
+            _repoStoreItem.UpDateInventoryQuantity(actualOrderList);
             HttpContext.Session.Remove("listOfItems");
             HttpContext.Session.Remove("currentOrder");
             return View();
         }
 
-
-
-
-
-        //delete at the end or change 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
         //view to list all orders by location with filter
         public IActionResult OrderHistoryByLocation(string location)
         {
-            var locations = _repository.GetAllStoreLocations().Select(x=>x.Location);
-            var userOrderss = _repository.GetAllOrders();
+            var locations = _repoStoreLocation.GetAllStoreLocations().Select(x=>x.Location);
+            var userOrderss = _repoUserOrder.GetAllOrders();
             if (!string.IsNullOrEmpty(location))
             {
-                userOrderss = _repository.GetAllOrderByLocation(location);
+                userOrderss = _repoUserOrder.GetAllOrderByLocation(location);
             }
             OrdersByLocationModel order = new OrdersByLocationModel
             {
@@ -153,7 +157,7 @@ namespace Project1.Controllers
         //'OrderHistoryByUser'. displays item, quantity, time, and username.
         public IActionResult OrderDetails(int id)
         {
-            IEnumerable<UserOrderItem> userOrder = _repository.GetOrderItemById(id);
+            IEnumerable<UserOrderItem> userOrder = _repoUserOrderItem.GetAllUserOrderItemByUserOrderId(id);
             return View(userOrder);
         }
         
@@ -162,7 +166,7 @@ namespace Project1.Controllers
         //and filter clicked, the correct filtered names appears
         public IActionResult SearchUserByName(string firstName, string lastName)
         {
-            var name = _repository.GetAllUserInfo();
+            var name = _repoUserInfo.GetAllUserInfo();
             SearchUserByNameModel userOrder = new SearchUserByNameModel();
             if (string.IsNullOrEmpty(firstName) && string.IsNullOrEmpty(lastName))
             {
@@ -185,7 +189,7 @@ namespace Project1.Controllers
         //to show all their orders
         public IActionResult OrderHistoryByUser(int id)
         {
-            var userOrders = _repository.GetAllOrderByUser(id);
+            var userOrders = _repoUserOrder.GetAllOrderByUserId(id);
             return View(userOrders);
         }
       

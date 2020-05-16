@@ -1,10 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -46,7 +42,11 @@ namespace Project1
             services.AddDbContext<Project1Context>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("Project1Context")));
 
-            services.AddScoped<Domain.IRepository, Repository>();
+            services.AddScoped<Domain.IRepositories.IRepoUserOrder, Data.Repositories.RepoUserOrder>();
+            services.AddScoped<Domain.IRepositories.IRepoStoreLocation, Data.Repositories.RepoStoreLocation>();
+            services.AddScoped<Domain.IRepositories.IRepoUserOrderItem, Data.Repositories.RepoUserOrderItem>();
+            services.AddScoped<Domain.IRepositories.IRepoStoreItem, Data.Repositories.RepoStoreItem>();
+            services.AddScoped<Domain.IRepositories.IRepoUserInfo, Data.Repositories.RepoUserInfo>();
 
         }
 
