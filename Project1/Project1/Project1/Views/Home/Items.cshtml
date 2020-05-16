@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Project1.Domain.StoreItem>
+﻿@model Project1.Models.StoreItemModel
 
 @{
     ViewData["Title"] = "Items";
@@ -6,36 +6,44 @@
 
 <h1>Items</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.itemName)
+                @Html.DisplayNameFor(model => model.storeItems[0].itemName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.itemPrice)
+                @Html.DisplayNameFor(model => model.storeItems[0].StoreItemInventory.itemInventory)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.storeItems[0].itemPrice)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+        @foreach (var item in Model.storeItems)
+        {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.itemName)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.StoreItemInventory.itemInventory)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.itemPrice)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.StoreItemId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.StoreItemId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.StoreItemId">Delete</a>
+                <form asp-controller="Home" asp-action="Items">
+                    <p>
+                        Title: <input type="number" max="20" asp-for="quantity" />
+                        <input asp-route-id="@item.StoreItemId" type="submit" value="Add to cart" />
+                    </p>
+                </form>
             </td>
         </tr>
-}
+        }
     </tbody>
 </table>
+<a asp-action="cart">Go to cart</a>

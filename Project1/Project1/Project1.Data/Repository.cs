@@ -18,22 +18,36 @@ namespace Project1.Data
             _context = context;
         }
         //adds new user order - not done yet - stuck
-        public void AddNewOrder(UserInfo userInfo, Domain.StoreLocation storeLocation, StoreItem storeItem, int orderQuantity)
+        public void AddNewOrder(string userName, int itemId)
         {
+            var userInfo = _context.UserInfos.First(x => x.userName == userName);
+            var location = _context.StoreLocations
+            .First(x => x.StoreLocationId == _context.StoreItems.Include(x=>x.StoreLocation)
+            .First(x => x.StoreItemId == itemId).StoreLocation.StoreLocationId);
             var newOrder = new UserOrder
             {
                 UserInfo = userInfo,
-                StoreLocation = storeLocation,
+                StoreLocation = location,
                 timeStamp = DateTime.Now
             };
-            var orderItem = new UserOrderItem
-            {
-                UserOrder = newOrder,
-                StoreItem = storeItem,
-                OrderQuantity = orderQuantity
-
-            };
+            _context.Add(newOrder);
+            _context.SaveChanges();
         }
+
+        //returns an instance of an item added to the cart so that it can be stored into a list in session
+        public UserOrderItem ReturnNewOrderItem(int itemId, int? orderId, int quantity)
+        {
+            var storeItem = _context.StoreItems.First(x => x.StoreItemId == itemId);
+            var order = _context.UserOrders.First(x => x.UserOrderId == orderId);
+            UserOrderItem newOrderItem = new UserOrderItem
+            {
+                StoreItem = storeItem,
+                UserOrder = order,
+                OrderQuantity = quantity
+            };
+            return newOrderItem;
+        }
+
         //Adds new user to the database
         public void AddNewUser(UserInfo userInfo)
         {            
@@ -74,11 +88,16 @@ namespace Project1.Data
             return _context.UserOrders;
         }
 
-        //displays all item at a selected location
-        public IEnumerable<StoreItem> GetAllStoreItems(Domain.StoreLocation storeLocation)
+        public IEnumerable<StoreItem> GetAllStoreItem()
         {
-            return _context.StoreItems.Include(x => x.StoreLocation)
-                .Where(x => x.StoreLocation == storeLocation).ToList();
+            return _context.StoreItems.Include(x=>x.StoreLocation);
+        }
+
+        //displays all item at a selected location
+        public IEnumerable<StoreItem> GetAllStoreItemByLocation(int locationId)
+        {
+            return _context.StoreItems.Include(x => x.StoreLocation).Include(x=>x.StoreItemInventory)
+                .Where(x => x.StoreLocation.StoreLocationId == locationId);
         }
         //displays all store locations
         public IEnumerable<Domain.StoreLocation> GetAllStoreLocations()
@@ -135,5 +154,27 @@ namespace Project1.Data
             throw new NotImplementedException();
         }
 
+        public int GetOrderLocationFromOrder(int? id)
+        {
+            return _context.UserOrders.Include(x => x.StoreLocation)
+                .First(x => x.UserOrderId == id).StoreLocation.StoreLocationId;
+        }
+
+        public void AddOrderItemToDb(List<UserOrderItem> lists)
+        {
+            _context.AddRange(lists);
+            _context.SaveChanges();
+        }
+
+        public void UpDateInventoryQuantity(List<UserOrderItem> orders)
+        {
+            foreach(UserOrderItem x in orders)
+            {
+                var itemInventory = _context.StoreItems.Include(x => x.StoreItemInventory)
+                    .First(t => t.StoreItemId == x.StoreItem.StoreItemId);
+                itemInventory.StoreItemInventory.itemInventory-=x.OrderQuantity;
+                _context.SaveChanges();
+            }
+        }
     }
 }

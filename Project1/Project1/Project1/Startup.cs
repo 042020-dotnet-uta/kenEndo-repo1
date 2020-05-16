@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Project1.Data;
+using Microsoft.AspNetCore.Http;
 
 namespace Project1
 {
@@ -25,15 +26,21 @@ namespace Project1
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+ 
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
             services.AddDistributedMemoryCache();
-
             services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromSeconds(10);
+                options.IdleTimeout = TimeSpan.FromMinutes(10);
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
-
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddControllersWithViews();
 
             services.AddDbContext<Project1Context>(options =>
@@ -57,6 +64,7 @@ namespace Project1
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
+            app.UseStatusCodePages();
             app.UseStaticFiles();
 
             app.UseRouting();

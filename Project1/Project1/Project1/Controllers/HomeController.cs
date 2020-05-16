@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Project1.Data;
 using Project1.Domain;
 using Project1.Models;
+
 
 namespace Project1.Controllers
 {
@@ -26,6 +28,7 @@ namespace Project1.Controllers
 
         public IActionResult Index()
         {
+            ViewData["hello"] = HttpContext.Session.GetString("UserName");
             return View();
         }
         //Displays all locations
@@ -33,21 +36,93 @@ namespace Project1.Controllers
         {
             return View(_repository.GetAllStoreLocations());
         }
-        public IActionResult Items(int? id)
+        public IActionResult Items(int id)
         {
-            if(id == null)
-            {
-                return NotFound();
-            }
             //stores all store items from a location into the items field
-            var items = _repository.GetAllStoreItems(_repository
-                .GetAllStoreLocations().First(x => x.StoreLocationId == id));
-            if(items == null)
+            var items = _repository.GetAllStoreItemByLocation(id);
+            StoreItemModel storeItem = new StoreItemModel
             {
-                return NotFound();
-            }
-            return View(items);
+                storeItems = items.ToList()
+            };
+            return View(storeItem);
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Items(int id, int quantity)
+        {
+            bool x = false;            
+            if (HttpContext.Session.GetInt32("currentOrder")==null)
+            {
+                //adds user order to the database
+                var userName = HttpContext.Session.GetString("UserName");
+                _repository.AddNewOrder(userName, id);
+                //stores the order id that was just added to the database to session
+                HttpContext.Session.SetInt32("currentOrder", _repository.GetAllOrders().Last().UserOrderId);
+                x = true;
+            }
+            //var x = HttpContext.Session.GetComplexData<List<UserOrderItem>>("listOfItems");
+            if (x)
+            {
+                var orderId = HttpContext.Session.GetInt32("currentOrder");
+                //creates a list to store all the items user order
+                List<UserOrderItemStoredList> listOfItemsOrdered = new List<UserOrderItemStoredList>();
+                //stores the item user add to cart into the list
+                UserOrderItemStoredList storedList = new UserOrderItemStoredList
+                {
+                    itemId = id,
+                    orderId = orderId,
+                    quantity = quantity
+                };
+                listOfItemsOrdered.Add(storedList);
+                HttpContext.Session.SetComplexData("listOfItems", listOfItemsOrdered);
+                return RedirectToAction("Items", new { id=_repository.GetOrderLocationFromOrder(orderId)});
+            }
+            else
+            {
+                var orderId = HttpContext.Session.GetInt32("currentOrder");
+                List<UserOrderItemStoredList> listOfItemsOrdered = HttpContext.Session
+                    .GetComplexData<List<UserOrderItemStoredList>>("listOfItems");
+                UserOrderItemStoredList storedList = new UserOrderItemStoredList
+                {
+                    itemId = id,
+                    orderId = orderId,
+                    quantity = quantity
+                };
+                listOfItemsOrdered.Add(storedList);
+                HttpContext.Session.SetComplexData("listOfItems", listOfItemsOrdered);
+                return RedirectToAction("Items", new { id = _repository.GetOrderLocationFromOrder(orderId) });
+            }
+        }
+        public IActionResult Cart()
+        {
+            List<UserOrderItem> actualOrderList = new List<UserOrderItem>();
+            var orderList = HttpContext.Session.GetComplexData<List<UserOrderItemStoredList>>("listOfItems");
+            foreach(UserOrderItemStoredList x in orderList)
+            {
+                actualOrderList.Add(_repository.ReturnNewOrderItem(x.itemId, x.orderId, x.quantity));
+            }
+            return View(actualOrderList);
+        }
+        public IActionResult Purchased()
+        {
+            List<UserOrderItem> actualOrderList = new List<UserOrderItem>();
+            var orderList = HttpContext.Session.GetComplexData<List<UserOrderItemStoredList>>("listOfItems");
+            foreach (UserOrderItemStoredList x in orderList)
+            {
+                actualOrderList.Add(_repository.ReturnNewOrderItem(x.itemId, x.orderId, x.quantity));
+            }
+            _repository.AddOrderItemToDb(actualOrderList);
+            _repository.UpDateInventoryQuantity(actualOrderList);
+            HttpContext.Session.Remove("listOfItems");
+            HttpContext.Session.Remove("currentOrder");
+            return View();
+        }
+
+
+
+
+
+        //delete at the end or change 
         public IActionResult Privacy()
         {
             return View();

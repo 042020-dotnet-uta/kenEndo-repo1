@@ -4,6 +4,8 @@ using System.Text;
 using System.Linq;
 using System.Reflection;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+using System.Runtime.Serialization;
 
 namespace Project1.Domain
 {
@@ -13,6 +15,8 @@ namespace Project1.Domain
 	public class StoreItem
 	{
 		public int StoreItemId { get; set; } //PRIMARY KEY
+		//[JsonIgnore]
+		//[IgnoreDataMember]
 		public virtual StoreLocation StoreLocation { get; set; } //RELATION TO STORELOCATION
 		public virtual StoreItemInventory StoreItemInventory { get; set; } //RELATION TO STOREITEMINVENTORY
 
