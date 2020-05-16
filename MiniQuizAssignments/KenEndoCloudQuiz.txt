@@ -1,0 +1,29 @@
+1.Which of the following is not true about cloud computing.
+- Cloud computing removes the need for hardware setup, software patching, and other time-consuming IT management chores.
+- Cloud computing makes databackup, disaster recovery, and business continuity easier and less expensive by mirroring its data to multiples sites.
+- (correct) The biggest cloud computing services run on a local network of secure datavillage.
+- Many cloud providers offer a broad set of policies, technologies, and controls that strengthen your serucity posture overall, and help protect your data.
+
+2. What is cloud scaling?
+- (correct) the process of adding or removing cloud computing resources as you need them.
+- controlling the size of information that is streaming to your network.
+- bundled remote computing service that provides cloud computing infrastructure over the internet with storage.
+- eneble client to rapidly deploy multiscreen offerings for live and on-demand content.
+
+3. What is a Global Scaling?
+- the process of adding instances for different purpose on demand.
+- (correct) scaling a service to run in different geographical locations.
+- Scaling that is performed automatically using an API.
+- Process of adding more instances to a service, system or application.
+
+4. What is serverless computing?
+- (correct) focus on building app functionality without spending time continually managing the servers and infrastructure required to do so.
+- provides platform as a service refers to cloud computing services that supply an on-demand environment for developing, testing, delivering, and managing software applications.
+- platform without a server provided to the client side.
+- method for delivering software applications over the internet, on demand and typically on a subscription basis.
+
+5. What is not possible to do with todays cloud service.
+- Create cloud-native application
+- Stream audio and video
+- Embed intelligence to help engage customers
+- (correct) Spy user activity through internet
