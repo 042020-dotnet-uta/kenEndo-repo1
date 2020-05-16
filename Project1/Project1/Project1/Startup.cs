@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Project1.Data;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Project1
 {
@@ -22,13 +23,13 @@ namespace Project1
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
- 
-            services.Configure<CookiePolicyOptions>(options =>
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options=>
             {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
+                options.Cookie.Name = "CookieMonster";
+                options.LoginPath = "/Welcome/Login";
             });
+
+
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {
@@ -66,11 +67,13 @@ namespace Project1
             app.UseHttpsRedirection();
             app.UseStatusCodePages();
             app.UseStaticFiles();
-
             app.UseRouting();
-
+            //authentication after rounting, asking who the user is.
+            app.UseAuthentication();
+            //asking if the user is allowed to access
             app.UseAuthorization();
             app.UseSession();
+            app.UseCookiePolicy();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

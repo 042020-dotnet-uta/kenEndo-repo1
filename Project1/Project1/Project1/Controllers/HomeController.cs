@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -12,6 +14,7 @@ using Project1.Models;
 
 namespace Project1.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -36,7 +39,7 @@ namespace Project1.Controllers
 
         public IActionResult Index()
         {
-            ViewData["hello"] = HttpContext.Session.GetString("UserName");
+            ViewData["hello"] = User.FindFirstValue(ClaimTypes.Name);
             return View();
         }
         //Displays all locations
@@ -70,7 +73,7 @@ namespace Project1.Controllers
             if (HttpContext.Session.GetInt32("currentOrder")==null)
             {
                 //adds user order to the database
-                var userName = HttpContext.Session.GetString("UserName");
+                var userName = User.FindFirstValue(ClaimTypes.Name);
                 _repoUserOrder.AddUserOrder(userName, id);
                 ViewData["error"] = "";
                 //stores the order id that was just added to the database to session

@@ -10,6 +10,10 @@ using Project1.Models;
 using System.Web;
 using Microsoft.AspNetCore.Http;
 using Project1.Domain.IRepositories;
+using System.Xml;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 
 namespace Project1.Controllers
 {
@@ -28,8 +32,8 @@ namespace Project1.Controllers
         }
         public IActionResult Index()
         {
+            HttpContext.SignOutAsync();
             HttpContext.Session.Remove("UserName");
-            ViewData["Test"] = HttpContext.Session.GetString("UserName");
             return View();
         }
         /// <summary>
@@ -93,7 +97,17 @@ namespace Project1.Controllers
             var x = _repoUserInfo.CheckUserInfoToDb(userInfo);
             if (ModelState.IsValid && x!=null)
             {
-                HttpContext.Session.SetString("UserName", x.userName);
+                var claims = new List<Claim>
+                {
+                new Claim(ClaimTypes.Name, userInfo.userName)
+                };
+                var identity = new ClaimsIdentity(
+                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var principal = new ClaimsPrincipal(identity);
+                var props = new AuthenticationProperties();
+                HttpContext.SignInAsync(CookieAuthenticationDefaults
+                    .AuthenticationScheme, principal, props).Wait();
+                //HttpContext.Session.SetString("UserName", x.userName);
                 return RedirectToAction("Index","Home");
             }
             return View();
