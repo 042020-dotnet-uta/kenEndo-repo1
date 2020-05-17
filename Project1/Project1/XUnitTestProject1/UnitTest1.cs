@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Update;
 using Moq;
@@ -6,10 +7,14 @@ using Project1.Data;
 using Project1.Data.Repositories;
 using Project1.Domain;
 using Project1.Domain.IRepositories;
+using Project1.Models;
+using Project1.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using Xunit;
+
 
 
 namespace XUnitTestProject1
@@ -86,6 +91,44 @@ namespace XUnitTestProject1
                 Assert.Equal(2, db1.UserInfos.Count());
             }
         }
+        [Fact]
+        public void CheckAddsUserToDbTestPersistOrNot()
+        {
+            var options = new DbContextOptionsBuilder<Project1Context>()
+                .UseInMemoryDatabase(databaseName: "Tests")
+                .Options;
+            UserInfo newUser = new UserInfo()
+            {
+                fName = "David",
+                lName = "Leblanc",
+                userName = "Davidl",
+                password = "abc123"
+            };
+            UserInfo newUser1 = new UserInfo()
+            {
+                fName = "James",
+                lName = "Jones",
+                userName = "jamesj",
+                password = "abc123"
+            };
+            //Act
+            using (var db1 = new Project1Context(options))
+            {
+                //adds user to the table
+                db1.Add(newUser);
+                db1.Add(newUser1);
+                db1.SaveChanges();
+            }
+            //Assert
+            using (var db1 = new Project1Context(options))
+            {
+                //check if first username is correct
+                Assert.Equal("David", db1.UserInfos.First().fName);
+                //cecks the total count of users in user table
+                Assert.Equal(2, db1.UserInfos.Count());
+            }
+        }
+
         /// <summary>
         /// test if the relational aspect(fk/pk) of database is working
         /// </summary>
@@ -186,6 +229,55 @@ namespace XUnitTestProject1
             }
 
         }
+        [Fact]
+        public void CheckRejectionOfDuplicateUsernameDuringRegistrations()
+        {
+            //Arrange
+            var options = new DbContextOptionsBuilder<Project1Context>()
+                .UseInMemoryDatabase(databaseName: "Test")
+                .Options;
+            UserInfo userInfo = new UserInfo()
+            {
+                fName = "David",
+                lName = "Leblanc",
+                userName = "Davidl",
+                password = "abc123"
+            };
+            UserInfo userInfo1 = new UserInfo()
+            {
+                fName = "Jack",
+                lName = "Daniels",
+                userName = "Davidl",
+                password = "abc123"
+            };
+            string error = "";
+            //Act
+            using (var db1 = new Project1Context(options))
+            {
+                userInfo.fName = userInfo.fName.ToLower();
+                userInfo.lName = userInfo.lName.ToLower();
+                db1.Add(userInfo);
+                db1.SaveChanges();
+                if (db1.UserInfos.Any(x => x.userName == userInfo1.userName))
+                {
+                    //throws an error if there is a matching username in the database
+                    error = "There was an error";
+                }
+                else
+                {
+                    db1.Add(userInfo1);
+                    db1.SaveChanges();
+                }
+            }
+            //Assert
+            using (var db1 = new Project1Context(options))
+            {
+                //correctly blocks user from adding a new user info into the database
+                Assert.Equal("There was an error", error);
+            }
+
+        }
+
         /// <summary>
         /// Checks if user login is working funcionally. if user name and password entered does not match 
         /// a row it should throw an exception, if it does match, allow the user to login
@@ -503,7 +595,408 @@ namespace XUnitTestProject1
                 Assert.Equal(1, userOrderId);
             }
         }
+        /// <summary>
+        /// Test to check that all orders by a user id is stored into a field
+        /// </summary>
+        [Fact]
+        public void TestGetAllOrderByUserId()
+        {
+            //Arrange
+            var options = new DbContextOptionsBuilder<Project1Context>()
+                .UseInMemoryDatabase(databaseName: "Test11")
+                .Options;
+            UserInfo userInfo = new UserInfo()
+            {
+                fName = "David",
+                lName = "Leblanc",
+                userName = "Davidl",
+                password = "abc123"
+            };
+            StoreLocation storeLocation = new StoreLocation()
+            {
+                Location = "Houston"
+            };
+            StoreItem storeItem = new StoreItem()
+            {
+                itemName = "Chicken",
+                itemPrice = 5
+            };
+            StoreItemInventory storeItemInventory = new StoreItemInventory()
+            {
+                itemInventory = 10
+            };
+            UserOrder userOrder = new UserOrder()
+            {
+                StoreLocation = storeLocation,
+                UserInfo = userInfo,
+                timeStamp = DateTime.Now
+            };
+            UserOrderItem userOrderItem = new UserOrderItem()
+            {
+                StoreItem = storeItem,
+                UserOrder = userOrder,
+                OrderQuantity = 2
+            };
+            List<UserOrderItem> listItems = new List<UserOrderItem>()
+            {
+                userOrderItem
+            };
+            storeItem.StoreItemInventory = storeItemInventory;
+            IEnumerable<UserOrder> orders;
+            string orderss;
+            //Act
+            using (var db3 = new Project1Context(options))
+            {
+                storeItem.StoreLocation = storeLocation;
+                db3.AddRange(storeLocation, storeItem, userOrder, userOrderItem, storeItemInventory);
+                db3.SaveChanges();
+                orders =  db3.UserOrders
+                    .Include(x => x.UserOrderItems).ThenInclude(x => x.StoreItem)
+                    .Where(x => x.UserInfo.UserInfoId == 1);
+                orderss = orders.First().UserOrderItems.First().StoreItem.itemName;
 
+            }
+            //Assert
+            using (var db3 = new Project1Context(options))
+            {
+                //checks to make sure that the user order item name is correct
+                Assert.Equal("Chicken", orderss);
+            }
+        }
+        /// <summary>
+        /// test to store all the orders into a field
+        /// </summary>
+        [Fact]
+        public void TestGetAllOrders()
+        {
+            //Arrange
+            var options = new DbContextOptionsBuilder<Project1Context>()
+                .UseInMemoryDatabase(databaseName: "Test12")
+                .Options;
+            UserInfo userInfo = new UserInfo()
+            {
+                fName = "David",
+                lName = "Leblanc",
+                userName = "Davidl",
+                password = "abc123"
+            };
+            StoreLocation storeLocation = new StoreLocation()
+            {
+                Location = "Houston"
+            };
+            StoreItem storeItem = new StoreItem()
+            {
+                itemName = "Chicken",
+                itemPrice = 5
+            };
+            StoreItemInventory storeItemInventory = new StoreItemInventory()
+            {
+                itemInventory = 10
+            };
+            UserOrder userOrder = new UserOrder()
+            {
+                StoreLocation = storeLocation,
+                UserInfo = userInfo,
+                timeStamp = DateTime.Now
+            };
+            storeItem.StoreItemInventory = storeItemInventory;
+            storeItem.StoreLocation = storeLocation;
+            UserOrder test;
+            //Act
+            using (var db3 = new Project1Context(options))
+            {
+
+                db3.AddRange(storeLocation,userInfo, storeItem, userOrder, storeItemInventory);
+                db3.SaveChanges();
+                test = db3.UserOrders.First();
+            }
+            //Assert
+                //test if the orders were retrieved from the database
+                Assert.Equal(1, test.UserOrderId);
+            
+        }
+        /// <summary>
+        /// tests to see if user order item can be stored into the database
+        /// </summary>
+        [Fact]
+        public void TestCreateUserOrderItem()
+        {
+            //Arrange
+            var options = new DbContextOptionsBuilder<Project1Context>()
+                .UseInMemoryDatabase(databaseName: "Test13")
+                .Options;
+            UserInfo userInfo = new UserInfo()
+            {
+                fName = "David",
+                lName = "Leblanc",
+                userName = "Davidl",
+                password = "abc123"
+            };
+            StoreLocation storeLocation = new StoreLocation()
+            {
+                Location = "Houston"
+            };
+            StoreItem storeItem = new StoreItem()
+            {
+                itemName = "Chicken",
+                itemPrice = 5
+            };
+            StoreItemInventory storeItemInventory = new StoreItemInventory()
+            {
+                itemInventory = 10
+            };
+            UserOrder userOrder = new UserOrder()
+            {
+                StoreLocation = storeLocation,
+                UserInfo = userInfo,
+                timeStamp = DateTime.Now
+            };
+            UserOrderItem userOrderItem = new UserOrderItem()
+            {
+                StoreItem = storeItem,
+                UserOrder = userOrder,
+                OrderQuantity = 2
+            };            
+            List<UserOrderItem> listItems = new List<UserOrderItem>()
+            {
+                userOrderItem
+            };
+            storeItem.StoreItemInventory = storeItemInventory;
+            string orderss;
+            //Act
+            using (var db3 = new Project1Context(options))
+            {
+                storeItem.StoreLocation = storeLocation;
+                db3.AddRange(storeLocation, storeItem, userOrder, userOrderItem, storeItemInventory);
+                db3.SaveChanges();
+
+                var newStoreItem = db3.StoreItems.First(x => x.StoreItemId == 1);
+                var order = db3.UserOrders.First(x => x.UserOrderId == 1);
+                UserOrderItem newOrderItem = new UserOrderItem
+                {
+                    StoreItem = storeItem,
+                    UserOrder = order,
+                    OrderQuantity = 2
+                };
+                db3.Add(newOrderItem);
+                db3.SaveChanges();
+                orderss = db3.UserOrderItems.Include(x => x.StoreItem).First().StoreItem.itemName;
+            }
+            //Assert
+            using (var db3 = new Project1Context(options))
+            {
+                //check if the created user order item is stored in the database
+                Assert.Equal("Chicken", orderss);
+            }
+        }
+        /// <summary>
+        /// checks if the functionality to store user order item information into a list is property functioning.
+        /// </summary>
+        [Fact]
+        public void TestServItemPost()
+        {
+            //Arrange
+            var id = 1;
+            var orderId = 1;
+            var quantity = 3;
+            //creates a list to store all the items user order
+            List<UserOrderItemStoredList> listOfItemsOrdered = new List<UserOrderItemStoredList>();
+            //stores the item user add to cart into the list
+            UserOrderItemStoredList storedList = new UserOrderItemStoredList
+            {
+                itemId = id,
+                orderId = orderId,
+                quantity = quantity
+            };
+            //Act
+            //adds the storedList to the created listOfItemsOrdered
+            listOfItemsOrdered.Add(storedList);
+            var x = listOfItemsOrdered.First().quantity;
+
+            //Assert
+            Assert.Equal(3, x);
+        }
+        /// <summary>
+        /// test to see if insert to viewmodel is working property
+        /// </summary>
+        [Fact]
+        public void TestServItems()
+        {
+            //Arrange
+            var options = new DbContextOptionsBuilder<Project1Context>()
+                .UseInMemoryDatabase(databaseName: "Test15")
+                .Options;
+            StoreLocation storeLocation = new StoreLocation()
+            {
+                Location = "Houston"
+            };
+            List<StoreItem> storeItem = new List<StoreItem>()
+            {
+                new StoreItem
+                {
+                    itemName = "Chicken",
+                    itemPrice = 5
+                },
+                new StoreItem
+                {
+                    itemName = "Pig",
+                    itemPrice = 10
+                }
+            };
+            IEnumerable<StoreItem> items;
+            int locationId = 1;
+            string itemName;
+            //Act
+            using (var db3 = new Project1Context(options))
+            {
+                storeItem[0].StoreLocation = storeLocation;
+                storeItem[1].StoreLocation = storeLocation;
+                db3.AddRange(storeLocation, storeItem[0], storeItem[1]);
+                db3.SaveChanges();
+                //access the db for item at specific location and gets the total number of them.
+                items = db3.StoreItems.Include(x => x.StoreLocation)
+                    .Where(x => x.StoreLocation.StoreLocationId == locationId);
+                StoreItemModel storeItems = new StoreItemModel
+                {
+                    storeItems = items.ToList()
+                };
+                itemName = storeItem.Last().itemName;
+            }
+            //Assert
+                //it should return the number of items available in the location
+                Assert.Equal("Pig", itemName);
+        }
+        /// <summary>
+        /// double filter functionality to search for user based off of their first name and last name
+        /// </summary>
+        [Fact]
+        public void TestServSearchUserByName()
+        {
+            var options = new DbContextOptionsBuilder<Project1Context>()
+                .UseInMemoryDatabase(databaseName: "Test16")
+                .Options;
+            UserInfo newUser = new UserInfo()
+            {
+                fName = "david",
+                lName = "leblanc",
+                userName = "Davidl",
+                password = "abc123"
+            };
+            UserInfo newUser1 = new UserInfo()
+            {
+                fName = "james",
+                lName = "jones",
+                userName = "jamesj",
+                password = "abc123"
+            };
+            string firstName = "James";
+            string lastName = "Jones";
+            IEnumerable<UserInfo> name;
+            SearchUserByNameModel userOrder = new SearchUserByNameModel();
+            //Act
+            using (var db1 = new Project1Context(options))
+            {
+                //adds user to the table
+                db1.Add(newUser);
+                db1.Add(newUser1);
+                db1.SaveChanges();
+                name = db1.UserInfos;
+                //if both first name and last name is empty display no name
+                if (string.IsNullOrEmpty(firstName) && string.IsNullOrEmpty(lastName))
+                {
+                    name = name.Where(x => x.fName.Contains("0"));
+                    userOrder.userInfos = name.ToList();
+                }
+                //if something is entered into first name search any first name that contain that letter
+                else if (!string.IsNullOrEmpty(firstName))
+                {
+                    name = name.Where(x => x.fName.Contains(firstName.ToLower()));
+                }
+                //if something is entered into last name search any last name that contain that letter
+                else if (!string.IsNullOrEmpty(lastName))
+                {
+                    name = name.Where(x => x.lName.Contains(lastName.ToLower()));
+                }
+                //store the list of names that match into a list
+                userOrder.userInfos = name.ToList();
+            }
+            var selectedName = userOrder.userInfos.First().fName;
+            //Assert
+                Assert.Equal("james", selectedName);
+        }
+        [Fact]
+        public void TestHomeControllerLocation()
+        {
+            //Arrange
+            var options = new DbContextOptionsBuilder<Project1Context>()
+                .UseInMemoryDatabase(databaseName: "Test17")
+                .Options;
+            StoreLocation storeLocation = new StoreLocation()
+            {
+                Location = "Houston"
+            };
+            IEnumerable<StoreLocation> locations;
+            using (var db1 = new Project1Context(options))
+            {
+                db1.Add(storeLocation);
+                db1.SaveChanges();
+                locations = db1.StoreLocations;
+            }
+            var mock = new Mock<IRepoStoreLocation>();
+            mock.Setup(x => x.GetAllStoreLocations()).Returns(locations);
+            var controller = new HomeController(null,null,mock.Object,null,null,null);
+            //Act
+            var actual = controller.Location();
+            //Assert
+            var viewResult = Assert.IsAssignableFrom<ViewResult>(actual);
+            var list = Assert.IsAssignableFrom<IEnumerable<StoreLocation>>(viewResult.Model);
+        }
+        [Fact]
+        public void TestHomeControllerItems()
+        {
+            //Arrange
+            var options = new DbContextOptionsBuilder<Project1Context>()
+                .UseInMemoryDatabase(databaseName: "Test17")
+                .Options;
+            StoreLocation storeLocation = new StoreLocation()
+            {
+                Location = "Houston"
+            };
+            List<StoreItem> storeItem = new List<StoreItem>()
+            {
+                new StoreItem
+                {
+                    itemName = "Chicken",
+                    itemPrice = 5,
+                    StoreLocation = storeLocation
+                },
+                new StoreItem
+                {
+                    itemName = "Pig",
+                    itemPrice = 10,
+                    StoreLocation = storeLocation                 
+                }
+            };
+            StoreItemModel listItems = new StoreItemModel()
+            {
+                storeItems = storeItem
+            };
+            int locations;
+            using (var db1 = new Project1Context(options))
+            {               
+                db1.AddRange(storeLocation, storeItem[0],storeItem[1]);
+                db1.SaveChanges();
+                locations = db1.StoreLocations.First().StoreLocationId;
+            }
+            var mock = new Mock<IServiceHome>();
+            mock.Setup(x => x.ServItems(locations)).Returns(listItems);
+            var controller = new HomeController(null, null, null, null, null, mock.Object);
+            //Act
+            var actual = controller.Items(locations);
+            //Assert
+            var viewResult = Assert.IsAssignableFrom<ViewResult>(actual);
+            var list = Assert.IsAssignableFrom<StoreItemModel>(viewResult.Model);
+        }
 
     }
 }
