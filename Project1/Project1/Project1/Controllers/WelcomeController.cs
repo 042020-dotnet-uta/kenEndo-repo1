@@ -1,16 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Project1.Domain;
-using Project1.Models;
-using System.Web;
 using Microsoft.AspNetCore.Http;
 using Project1.Domain.IRepositories;
-using System.Xml;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
@@ -22,6 +16,7 @@ namespace Project1.Controllers
         private readonly ILogger<WelcomeController> _logger;
         private readonly IRepoUserOrder _repository;
         private readonly IRepoUserInfo _repoUserInfo;
+
 
         public WelcomeController(ILogger<WelcomeController> logger
             ,IRepoUserOrder repository, IRepoUserInfo repoUserInfo)
@@ -58,9 +53,6 @@ namespace Project1.Controllers
             {
                 try
                 {
-                    //converts username to lowercase for name search purpose
-                    userinfo.fName = userinfo.fName.ToLower();
-                    userinfo.lName = userinfo.lName.ToLower();
                     //function to add new user to the database
                     _repoUserInfo.AddUserInfo(userinfo);
                     //redirects user to the login page-----------------------------
@@ -94,8 +86,7 @@ namespace Project1.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Login([Bind("userName,password")]UserInfo userInfo)
         {
-            var x = _repoUserInfo.CheckUserInfoToDb(userInfo);
-            if (ModelState.IsValid && x!=null)
+            if (ModelState.IsValid && _repoUserInfo.CheckUserInfoToDb(userInfo) != null)
             {
                 var claims = new List<Claim>
                 {
@@ -107,7 +98,6 @@ namespace Project1.Controllers
                 var props = new AuthenticationProperties();
                 HttpContext.SignInAsync(CookieAuthenticationDefaults
                     .AuthenticationScheme, principal, props).Wait();
-                //HttpContext.Session.SetString("UserName", x.userName);
                 return RedirectToAction("Index","Home");
             }
             return View();

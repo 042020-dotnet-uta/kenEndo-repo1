@@ -18,6 +18,9 @@ namespace Project1.Data.Repositories
         //add new user info to database
         public void AddUserInfo(UserInfo userInfo)
         {
+            //converts username to lowercase for name search purpose
+            userInfo.fName = userInfo.fName.ToLower();
+            userInfo.lName = userInfo.lName.ToLower();
             if (_context.UserInfos.Any(x => x.userName == userInfo.userName))
             {
                 throw new InvalidOperationException("Username already exists");

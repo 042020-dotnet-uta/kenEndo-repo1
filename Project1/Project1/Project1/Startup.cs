@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Project1.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Project1.Domain.IRepositories;
 
 namespace Project1
 {
@@ -48,7 +49,7 @@ namespace Project1
             services.AddScoped<Domain.IRepositories.IRepoUserOrderItem, Data.Repositories.RepoUserOrderItem>();
             services.AddScoped<Domain.IRepositories.IRepoStoreItem, Data.Repositories.RepoStoreItem>();
             services.AddScoped<Domain.IRepositories.IRepoUserInfo, Data.Repositories.RepoUserInfo>();
-
+            services.AddScoped<Services.IServiceHome, Services.ServiceHome>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
