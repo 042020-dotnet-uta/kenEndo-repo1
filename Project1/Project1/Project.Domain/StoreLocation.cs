@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace Project1.Domain
@@ -12,6 +13,7 @@ namespace Project1.Domain
 		public int StoreLocationId { get; set; } //PRIMARY KEY
 		public virtual ICollection<StoreItem> StoreItems { get; set; } //RELATION TO STOREITEM
 		private string _Location;
+		[DisplayName("Store Location")]
 		public string Location // name of location
 		{
 			get { return _Location; }

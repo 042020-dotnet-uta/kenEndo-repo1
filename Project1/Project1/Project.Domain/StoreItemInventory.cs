@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace Project1.Domain
@@ -13,7 +14,7 @@ namespace Project1.Domain
 		public virtual List<StoreItem> StoreItem { get; set; }//RELATION TO STOREITEM
 
 		private int _itemInventory; //inventory of item
-
+		[DisplayName("Quantity")]
 		public int itemInventory
 		{
 			get { return _itemInventory; }

@@ -14,7 +14,7 @@ namespace Project1.Domain
 		public int UserInfoId { get; set; } //PRIMARY KEY
 
 		private string _fName; //first name
-
+		[DisplayName("First Name")]
 		public string fName
 		{
 			get { return _fName; }
@@ -22,7 +22,7 @@ namespace Project1.Domain
 		}
 
 		private string _lName; //last name
-
+		[DisplayName("Last Name")]
 		public string lName
 		{
 			get { return _lName; }
