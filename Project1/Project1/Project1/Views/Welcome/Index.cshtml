@@ -7,6 +7,6 @@
 <h1>@ViewData["test"]</h1>
 
 <div>
-    <a asp-action="Registration">Register a new account</a><br />
-    <a asp-action="Login">Login</a>
+    <input class="btn btn-light btn-outline-dark" type="button" value="Login" onclick="location.href='@Url.Action("Login","Welcome")'" />
+    <input class="btn btn-light btn-outline-dark" type="button" value="Registration" onclick="location.href='@Url.Action("Registration","Welcome")'" />
 </div>

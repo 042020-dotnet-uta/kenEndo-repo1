@@ -51,7 +51,6 @@ namespace Project1.Services
             };
             return order;
         }
-
         //converts the list of stored object with information (item id, order id, quantity) into
         //a list of UserOrderItem instance
         public List<UserOrderItem> ServCart(List<UserOrderItemStoredList> orderList)
@@ -65,7 +64,6 @@ namespace Project1.Services
                 }
                 return actualOrderList;
         }
-
         public List<UserOrderItemStoredList> ServItemPost(int id, int? orderId, int quantity)
         {
             //creates a list to store all the items user order
@@ -103,7 +101,6 @@ namespace Project1.Services
             };
             return storeItem;
         }
-
         public void ServPurchased(List<UserOrderItemStoredList> orderList)
         {
             //creates a list of UserOrderItem so that informations can be stored

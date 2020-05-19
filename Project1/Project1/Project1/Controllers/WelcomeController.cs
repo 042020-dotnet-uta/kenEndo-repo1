@@ -26,10 +26,14 @@ namespace Project1.Controllers
             _repository = repository;
             _repoUserInfo = repoUserInfo;
         }
-        public IActionResult Index()
+        public IActionResult Logout()
         {
             HttpContext.SignOutAsync();
             HttpContext.Session.Remove("UserName");
+            return RedirectToAction("Index", "Welcome");
+        }
+        public IActionResult Index()
+        {
             return View();
         }
         /// <summary>

@@ -12,23 +12,22 @@
         <form asp-action="Login">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="userName" class="control-label"></label>
+                <label asp-for="userName" class="control-label text-light"></label>
                 <input asp-for="userName" class="form-control" />
-                <span asp-validation-for="userName" class="text-danger"></span>
+                <span asp-validation-for="userName" class="text-danger font-weight-bold"></span>
             </div>
             <div class="form-group">
-                <label asp-for="password" class="control-label"></label>
+                <label asp-for="password" class="control-label text-light"></label>
                 <input asp-for="password" class="form-control" />
-                <span asp-validation-for="password" class="text-danger"></span>
+                <span asp-validation-for="password" class="text-danger font-weight-bold"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Login" class="btn btn-primary" />
+                <input type="submit" value="Login" class="btn btn-light btn-outline-dark" />
+                <input class="btn btn-light btn-outline-dark" type="button" value="Back" onclick="location.href='@Url.Action("Index","Welcome")'" />
             </div>
         </form>
     </div>
 </div>
-    <a asp-action="Index">Back</a>
-
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
