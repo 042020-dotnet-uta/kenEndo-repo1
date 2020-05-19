@@ -8,6 +8,7 @@ using Project1.Domain.IRepositories;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+using Newtonsoft.Json;
 
 namespace Project1.Controllers
 {
@@ -44,7 +45,6 @@ namespace Project1.Controllers
         ///  This action adds the new user to the database and returns exception if
         ///  there is a duplicate username available
         /// </summary>
-        /// <param name="userinfo"></param>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Registration([Bind("fName,lName,userName,password")]UserInfo userinfo)
@@ -53,26 +53,30 @@ namespace Project1.Controllers
             {
                 try
                 {
+                    _logger.LogError(string.Format("Adding new user to the database: {0}", JsonConvert.SerializeObject(userinfo)));
                     //function to add new user to the database
                     _repoUserInfo.AddUserInfo(userinfo);
                     //redirects user to the login page-----------------------------
                     return RedirectToAction(nameof(Index));
                 }
-                catch (InvalidOperationException)
+                catch (InvalidOperationException ioe)
                 {
+                    _logger.LogError(ioe.Message);
                     //if there were duplicate in the database an exception is thrown and shows
                     //this message on view
                     ViewData["Error"] = "The entered username already exists, please try again.";
                     return View();
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    _logger.LogError(e.Message);
                     ViewData["Error"] = "There was an error, please try again.";
                     return View();
                 }
             }
             else
-            { 
+            {
+                _logger.LogError("ModelState invalid");
                 //any issue with modelstate, a message will be thrown and user needs to repeat
                 ViewData["Error"] = "There was an error, please try again.";
                 return View();
@@ -88,6 +92,8 @@ namespace Project1.Controllers
         {
             if (ModelState.IsValid && _repoUserInfo.CheckUserInfoToDb(userInfo) != null)
             {
+                _logger.LogError(string.Format("User logging in: {0}", JsonConvert.SerializeObject(userInfo)));
+                //below is used to create auth cookie to store username
                 var claims = new List<Claim>
                 {
                 new Claim(ClaimTypes.Name, userInfo.userName)
@@ -100,6 +106,7 @@ namespace Project1.Controllers
                     .AuthenticationScheme, principal, props).Wait();
                 return RedirectToAction("Index","Home");
             }
+            _logger.LogError("ModelState invalid");
             return View();
         }
     }

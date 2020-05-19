@@ -56,14 +56,14 @@ namespace Project1.Services
         //a list of UserOrderItem instance
         public List<UserOrderItem> ServCart(List<UserOrderItemStoredList> orderList)
         {
-            //creates a list of UserOrderItem so that informations can be stored
-            List<UserOrderItem> actualOrderList = new List<UserOrderItem>();
-            //For each to convert id and quantity values into an instance of UserOrderItem and added to the list
-            foreach (UserOrderItemStoredList x in orderList)
-            {
-                actualOrderList.Add(_repoUserOrderItem.CreateUserOrderItem(x.itemId, x.orderId, x.quantity));
-            }
-            return actualOrderList;
+                //creates a list of UserOrderItem so that informations can be stored
+                List<UserOrderItem> actualOrderList = new List<UserOrderItem>();
+                //For each to convert id and quantity values into an instance of UserOrderItem and added to the list
+                foreach (UserOrderItemStoredList x in orderList)
+                {
+                    actualOrderList.Add(_repoUserOrderItem.CreateUserOrderItem(x.itemId, x.orderId, x.quantity));
+                }
+                return actualOrderList;
         }
 
         public List<UserOrderItemStoredList> ServItemPost(int id, int? orderId, int quantity)
@@ -131,12 +131,12 @@ namespace Project1.Services
                 userOrder.userInfos = name.ToList();
             }
             //if something is entered into first name search any first name that contain that letter
-            else if (!string.IsNullOrEmpty(firstName))
+            if (!string.IsNullOrEmpty(firstName))
             {
                 name = name.Where(x => x.fName.Contains(firstName.ToLower()));
             }
             //if something is entered into last name search any last name that contain that letter
-            else if (!string.IsNullOrEmpty(lastName))
+            if (!string.IsNullOrEmpty(lastName))
             {
                 name = name.Where(x => x.lName.Contains(lastName.ToLower()));
             }

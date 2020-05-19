@@ -37,7 +37,7 @@
             <td>
                 <form asp-controller="Home" asp-action="Items">
                     <p>
-                        Title: <input type="number" max="20" asp-for="quantity" />
+                        Title: <input type="number" min="0" max="20" asp-for="quantity" />
                         <input asp-route-id="@item.StoreItemId" type="submit" value="Add to cart" />
                     </p>
                 </form>

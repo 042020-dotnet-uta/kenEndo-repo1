@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace Project1.Domain
@@ -12,6 +13,7 @@ namespace Project1.Domain
         public int UserOrderItemId { get; set; } //Primary key
         public virtual StoreItem StoreItem { get; set; } //RELATION TO STOREITEM
         public virtual UserOrder UserOrder { get; set; } //RELATION TO USERORDER
+        [DisplayName("Order Quantity")]
         public int OrderQuantity { get; set; }
     }
 }
