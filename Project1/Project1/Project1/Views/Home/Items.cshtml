@@ -1,13 +1,13 @@
 ﻿@model Project1.Models.StoreItemModel
 
 @{
-    ViewData["Title"] = "Items";
+    ViewData["Title"] = "Pets";
 }
 
-<h1>Items</h1>
+<h1>Pets</h1>
 <h3 style="color:red">@ViewData["error"]</h3>
-<table class="table">
-    <thead>
+<table class="table table-light">
+    <thead class="thead-dark">
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.storeItems[0].itemName)
@@ -24,27 +24,28 @@
     <tbody>
         @foreach (var item in Model.storeItems)
         {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.itemName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StoreItemInventory.itemInventory)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.itemPrice)
-            </td>
-            <td>
-                <form asp-controller="Home" asp-action="Items">
-                    <p>
-                        Title: <input type="number" min="0" max="20" asp-for="quantity" />
-                        <input asp-route-id="@item.StoreItemId" type="submit" value="Add to cart" />
-                    </p>
-                </form>
-            </td>
-        </tr>
+            <tr class="text-dark">
+                <td>
+                    <h5>@Html.DisplayFor(modelItem => item.itemName)</h5>
+                </td>
+                <td>
+                    <h5>@Html.DisplayFor(modelItem => item.StoreItemInventory.itemInventory)</h5>
+                </td>
+                <td>
+                    <h5>$@Html.DisplayFor(modelItem => item.itemPrice)</h5>
+                </td>
+                <td>
+                    <form asp-controller="Home" asp-action="Items">
+                        <p>
+                            <input type="number" min="0" max="20" asp-for="quantity" />
+                            <input class="btn btn-light btn-outline-dark btn-sm" asp-route-id="@item.StoreItemId" type="submit" value="Add to cart" />
+                        </p>
+                    </form>
+                </td>
+            </tr>
         }
     </tbody>
 </table>
-<a asp-action="cart">Go to cart</a>
+<br />
+<input class="btn btn-light btn-outline-dark" type="button" value="Go to cart" onclick="location.href='@Url.Action("Cart","Home")'" />
 

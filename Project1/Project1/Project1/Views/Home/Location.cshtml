@@ -3,27 +3,16 @@
     ViewData["Title"] = "Location";
 }
 
-<h1>Location</h1>
+<h1>Locations</h1>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Location)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
+
+
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Items"
-                       asp-route-id="@item.StoreLocationId">@Html.DisplayFor(modelItem => item.Location)</a>
-                </td>
-            </tr>
+
+                    <a class="nav-link text-dark list-group-item list-group-item-action text-center" asp-area="" asp-controller="Home" asp-action="Items"
+                       asp-route-id="@item.StoreLocationId"><h4>@Html.DisplayFor(modelItem => item.Location)</h4></a>
+
         }
-    </tbody>
-</table>
-<a asp-action="index">Back to Nav</a>
+<br />
+<input class="btn btn-light btn-outline-dark" type="button" value="Back" onclick="location.href='@Url.Action("Index","Home")'" />

@@ -6,8 +6,8 @@
 
 <h1>Cart</h1>
 
-<table class="table">
-    <thead>
+<table class="table table-light">
+    <thead class="thead-dark">
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model[0].StoreItem.itemName)
@@ -24,18 +24,19 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
+            <tr class="text-dark">
                 <td>
-                    @Html.DisplayFor(modelItem => item.StoreItem.itemName)
+                    <h5>@Html.DisplayFor(modelItem => item.StoreItem.itemName)</h5>
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.OrderQuantity)
+                    <h5>@Html.DisplayFor(modelItem => item.OrderQuantity)</h5>
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.StoreItem.itemPrice)
+                    <h5>$@Html.DisplayFor(modelItem => item.StoreItem.itemPrice)</h5>
                 </td>
             </tr>
         }
     </tbody>
 </table>
-<a asp-action="Purchased">Place Order</a>
+<br />
+<input class="btn btn-light btn-outline-dark" type="button" value="Place Order" onclick="location.href='@Url.Action("Purchased","Home")'" />

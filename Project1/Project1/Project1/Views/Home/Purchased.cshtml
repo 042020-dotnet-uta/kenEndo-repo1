@@ -1,10 +1,18 @@
 ﻿
 @{
-    ViewData["Title"] = "Purchased";
+    ViewData["Title"] = "Purchase Complete";
 }
 
 
-<h1 style="color:red">Order placed, press back to return to home page.</h1>
-<a asp-action="Index">Back</a>
+    <div class="jumbotron">
+        <h1 class="display-4">Order Placed!</h1>
+        <p class="lead">Your pet should arrive within the next few days!</p>
+        <hr class="my-4">
+        <p>If you would like to make more orders please select back below to view other pets and locations!</p>
+        <p class="lead">
+            <a class="btn btn-primary btn-sm" onclick="location.href='@Url.Action("Index","Home")'" role="button">Back</a>
+        </p>
+    </div>
+
 
 
