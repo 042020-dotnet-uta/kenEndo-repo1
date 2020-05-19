@@ -28,6 +28,8 @@ namespace Project1
             {
                 options.Cookie.Name = "CookieMonster";
                 options.LoginPath = "/Welcome/Login";
+                //options.Cookie.Expiration = DateTime.Now.AddDays(-1);
+                
             });
 
 
@@ -79,7 +81,7 @@ namespace Project1
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Welcome}/{action=Logout}/{id?}");
+                    pattern: "{controller=Welcome}/{action=Index}/{id?}");
             });
         }
     }
