@@ -11,13 +11,7 @@
     <thead class="thead-dark">
         <tr class="text-center">
             <th>
-                @Html.DisplayNameFor(model => model.StoreItem.itemName)
-            </th>
-            <th>
-                Total Pet Price
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OrderQuantity)
+                @Html.DisplayNameFor(model => model.UserOrder.timeStamp)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.UserOrder.UserInfo.fName)
@@ -26,7 +20,13 @@
                 @Html.DisplayNameFor(model => model.UserOrder.UserInfo.lName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.UserOrder.timeStamp)
+                @Html.DisplayNameFor(model => model.StoreItem.itemName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderQuantity)
+            </th>
+            <th>
+                Total Pet Price
             </th>
             <th></th>
         </tr>
@@ -36,13 +36,7 @@
         {
             <tr class="text-dark text-center">
                 <td>
-                    <h5>@Html.DisplayFor(modelItem => item.StoreItem.itemName)</h5>
-                </td>
-                <td>
-                    <h5>$@(item.StoreItem.itemPrice*item.OrderQuantity)</h5>
-                </td>
-                <td>
-                    <h5>@Html.DisplayFor(modelItem => item.OrderQuantity)</h5>
+                    <h5>@Html.DisplayFor(modelItem => item.UserOrder.timeStamp)</h5>
                 </td>
                 <td>
                     <h5>@Html.DisplayFor(modelItem => item.UserOrder.UserInfo.fName)</h5>
@@ -51,11 +45,31 @@
                     <h5>@Html.DisplayFor(modelItem => item.UserOrder.UserInfo.lName)</h5>
                 </td>
                 <td>
-                    <h5>@Html.DisplayFor(modelItem => item.UserOrder.timeStamp)</h5>
+                    <h5>@Html.DisplayFor(modelItem => item.StoreItem.itemName)</h5>
+                </td>
+                <td>
+                    <h5>@Html.DisplayFor(modelItem => item.OrderQuantity)</h5>
+                </td>
+                <td>
+                    <h5>$@(item.StoreItem.itemPrice*item.OrderQuantity)</h5>
                 </td>
             </tr>
         }
     </tbody>
+    <tfoot class="border-dark">
+        <tr class="text-dark text-center">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+                <h5 class="font-weight-bold">Total Price:</h5>
+            </td>
+            <td>
+                <h5>$@(Model.Sum(x=>(x.StoreItem.itemPrice * x.OrderQuantity)))</h5>
+            </td>
+        </tr>
+    </tfoot>
 </table>
 <br />
 <input class="btn btn-light btn-outline-dark" type="button" value="Back to Main" onclick="location.href='@Url.Action("Index","Home")'" />
