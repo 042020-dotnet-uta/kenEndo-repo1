@@ -79,7 +79,7 @@ namespace Project1
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Welcome}/{action=Index}/{id?}");
+                    pattern: "{controller=Welcome}/{action=Logout}/{id?}");
             });
         }
     }

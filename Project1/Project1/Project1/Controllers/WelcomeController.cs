@@ -28,8 +28,8 @@ namespace Project1.Controllers
         }
         public IActionResult Logout()
         {
+            HttpContext.Session.Clear();
             HttpContext.SignOutAsync();
-            HttpContext.Session.Remove("UserName");
             return RedirectToAction("Index", "Welcome");
         }
         public IActionResult Index()
