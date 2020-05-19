@@ -9,6 +9,7 @@ using Project1.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Project1.Domain.IRepositories;
+using System.Threading;
 
 namespace Project1
 {
@@ -24,13 +25,6 @@ namespace Project1
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options=>
-            {
-                options.Cookie.Name = "CookieMonster";
-                options.LoginPath = "/Welcome/Login";
-                //options.Cookie.Expiration = DateTime.Now.AddDays(-1);
-                
-            });
 
 
             services.AddDistributedMemoryCache();
@@ -40,6 +34,15 @@ namespace Project1
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
+            {
+                options.Cookie.Name = "CookieMonster";
+                options.LoginPath = "/Welcome/Login";
+                options.Cookie.IsEssential = true;
+                options.SlidingExpiration = true;
+                options.ExpireTimeSpan = TimeSpan.FromSeconds(10);
+            });
+
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddControllersWithViews();
 
