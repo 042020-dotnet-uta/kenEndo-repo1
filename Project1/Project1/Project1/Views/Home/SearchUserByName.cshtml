@@ -6,17 +6,17 @@
 
 <h1>Order History</h1>
 
-<form asp-controller="Home" asp-action="SearchUserByName" method="get">
-    <p>
+<form asp-controller="Home" asp-action="SearchUserByName" class="form-group" method="get">
+    <p class="text-dark">
         First Name: <input type="text" asp-for="firstName" />
         Last Name: <input type="text" asp-for="lastName" />
-        <input type="submit" value="Filter" />
+        <input class="btn-light btn-outline-dark" type="submit" value="Filter" />
     </p>
 </form>
 
-<table class="table">
-    <thead>
-        <tr>
+<table class="table table-light">
+    <thead class="thead-dark">
+        <tr class="text-center">
             <th>
                 @Html.DisplayNameFor(model => model.firstName)
             </th>
@@ -27,18 +27,17 @@
         </tr>
     </thead>
     <tbody>
-
         @foreach (var item in Model.userInfos)
         {
-        <tr>
+        <tr class="text-center text-dark">
             <td>
-                @Html.DisplayFor(modelItem => item.fName)
+                <h5>@Html.DisplayFor(modelItem => item.fName)</h5>
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.lName)
+                <h5>@Html.DisplayFor(modelItem => item.lName)</h5>
             </td>
             <td>
-                <a asp-action="OrderHistoryByUser" asp-route-id="@item.UserInfoId">Details</a>
+                <h5><a asp-action="OrderHistoryByUser" asp-route-id="@item.UserInfoId">Details</a></h5>
             </td>
         </tr>
         }

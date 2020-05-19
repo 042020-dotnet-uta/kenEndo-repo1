@@ -8,7 +8,7 @@
 <h3 style="color:red">@ViewData["error"]</h3>
 <table class="table table-light">
     <thead class="thead-dark">
-        <tr>
+        <tr class="text-center">
             <th>
                 @Html.DisplayNameFor(model => model.storeItems[0].itemName)
             </th>
@@ -24,7 +24,7 @@
     <tbody>
         @foreach (var item in Model.storeItems)
         {
-            <tr class="text-dark">
+            <tr class="text-dark text-center border-bottom">
                 <td>
                     <h5>@Html.DisplayFor(modelItem => item.itemName)</h5>
                 </td>

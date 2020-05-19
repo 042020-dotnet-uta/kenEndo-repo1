@@ -7,14 +7,14 @@
 <h1>Order Details</h1>
 
 
-<table class="table">
-    <thead>
-        <tr>
+<table class="table table-light">
+    <thead class="thead-dark">
+        <tr class="text-center">
             <th>
                 @Html.DisplayNameFor(model => model.StoreItem.itemName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StoreItem.itemPrice)
+                Total Pet Price
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.OrderQuantity)
@@ -34,30 +34,29 @@
     <tbody>
         @foreach (var item in Model)
         {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.StoreItem.itemName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StoreItem.itemPrice)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OrderQuantity)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserOrder.UserInfo.fName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserOrder.UserInfo.lName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserOrder.timeStamp)
-            </td>
-        </tr>
+            <tr class="text-dark text-center">
+                <td>
+                    <h5>@Html.DisplayFor(modelItem => item.StoreItem.itemName)</h5>
+                </td>
+                <td>
+                    <h5>$@(item.StoreItem.itemPrice*item.OrderQuantity)</h5>
+                </td>
+                <td>
+                    <h5>@Html.DisplayFor(modelItem => item.OrderQuantity)</h5>
+                </td>
+                <td>
+                    <h5>@Html.DisplayFor(modelItem => item.UserOrder.UserInfo.fName)</h5>
+                </td>
+                <td>
+                    <h5>@Html.DisplayFor(modelItem => item.UserOrder.UserInfo.lName)</h5>
+                </td>
+                <td>
+                    <h5>@Html.DisplayFor(modelItem => item.UserOrder.timeStamp)</h5>
+                </td>
+            </tr>
         }
     </tbody>
 </table>
-<div>
-    <a asp-action="Index">Back to Main Navigation</a>
-</div>
+<br />
+<input class="btn btn-light btn-outline-dark" type="button" value="Back to Main" onclick="location.href='@Url.Action("Index","Home")'" />
 

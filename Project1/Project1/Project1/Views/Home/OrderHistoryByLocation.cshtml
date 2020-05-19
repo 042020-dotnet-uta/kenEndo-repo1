@@ -7,18 +7,18 @@
 <h1>Order History</h1>
 
 </p>
-<form asp-controller="Home" asp-action="OrderHistoryByLocation" method="get">
-    <p>
-        <select asp-for="location" asp-items="Model.storeLocations">
+<form asp-controller="Home" class="form-inline" asp-action="OrderHistoryByLocation" method="get">
+    <p class="text-dark">
+        Location: <select class="custom-select-sm form-control" asp-for="location" asp-items="Model.storeLocations">
             <option value="">All</option>
         </select>
-        <input type="submit" value="Filter" />
+        <input class="btn-light btn-outline-dark btn-sm form-control" type="submit" value="Filter" />
     </p>
 </form>
 
-<table class="table">
-    <thead>
-        <tr>
+<table class="table table-light">
+    <thead class="thead-dark">
+        <tr class="text-center">
             <th>
                 @Html.DisplayNameFor(model => model.userOrders[0].UserOrderId)
             </th>
@@ -28,20 +28,22 @@
             <th></th>
         </tr>
     </thead>
-    <tbody>
+    <tbody class="table">
         @foreach (var item in Model.userOrders)
         {
-            <tr>
+            <tr class="text-dark text-center">
                 <td>
-                    @Html.DisplayFor(modelItem => item.UserOrderId)
+                    <h5>@Html.DisplayFor(modelItem => item.UserOrderId)</h5>
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.timeStamp)
+                    <h5>@Html.DisplayFor(modelItem => item.timeStamp)</h5>
                 </td>
                 <td>
-                    <a asp-action="OrderDetails" asp-route-id="@item.UserOrderId">Details</a>
+                    <h5><a asp-action="OrderDetails" asp-route-id="@item.UserOrderId">Details</a></h5>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+<br />
+<input class="btn btn-light btn-outline-dark" type="button" value="Back" onclick="location.href='@Url.Action("Index","Home")'" />

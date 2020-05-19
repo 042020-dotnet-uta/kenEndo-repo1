@@ -8,7 +8,7 @@
 
 <table class="table table-light">
     <thead class="thead-dark">
-        <tr>
+        <tr class="text-center">
             <th>
                 @Html.DisplayNameFor(model => model[0].StoreItem.itemName)
             </th>
@@ -18,13 +18,13 @@
             <th>
                 @Html.DisplayNameFor(model => model[0].StoreItem.itemPrice)
             </th>
-            <th></th>
+            <th>Total</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            <tr class="text-dark">
+            <tr class="text-dark text-center">
                 <td>
                     <h5>@Html.DisplayFor(modelItem => item.StoreItem.itemName)</h5>
                 </td>
@@ -34,9 +34,24 @@
                 <td>
                     <h5>$@Html.DisplayFor(modelItem => item.StoreItem.itemPrice)</h5>
                 </td>
+                <td>
+                    <h5>$@(item.StoreItem.itemPrice*item.OrderQuantity)</h5>
+                </td>
             </tr>
         }
     </tbody>
+    <tfoot class="border-dark">
+        <tr class="text-dark text-center">
+            <td></td>
+            <td></td>
+            <td>
+            <h5 class="font-weight-bold">Total Price:</h5>
+            </td>
+            <td>
+            <h5>$@(Model.Sum(x=>(x.StoreItem.itemPrice * x.OrderQuantity)))</h5>
+            </td>
+        </tr>
+    </tfoot>
 </table>
 <br />
 <input class="btn btn-light btn-outline-dark" type="button" value="Place Order" onclick="location.href='@Url.Action("Purchased","Home")'" />
