@@ -1,0 +1,29 @@
+1. What is not a reason that you might migrate existing application to SOA
+- The application inventory has duplicate logic.
+- The applications are hard to understand because their logic is monolithic and was repeatedly patched rather than rewritten as requirements
+- The applications are monolithic, combining the logic of the user interface, business processing, and data access such that update of one kind of logic requires your compnay to test other behaviors
+- (correct)the applications are well organized and shows no error
+
+2. What are the business implications of SOA?
+- (Correct) gives company the agility to respond to business or technological changes
+- in a finely-grained service, the area of concern is broad enough so that business people can understand the purpose of the service, even if they know little about the service
+- it is not reusable so companies will have to look for newer services every so often
+- it limits the business processes and data availability to work with
+
+3. What has horrible compatibility with SOA?
+- They provide coarse-grained and loosely coupled services causing management issues.
+- (correct) They exhibit more latency than more tightly coupled implementations.
+- They can not work with legacy systems.
+- They have no way to deal with the standardization of naming, definitions, and identification that leads to implementation challenge.
+
+4. Which Approach between Top-down, bottom-up, middle-up methodologies fits SOA
+- (Correct) Top-down
+- bottom-up
+- middle-up
+- SOA uses a unique style that does not follow any of the methodologies provided.
+
+5. How can you achieve loose coupling in SOA
+- Through a third party applicaton that generates loose coupled services
+- (correct) by using service interface to limit its dependency also hide service implementation.
+- not using an encapsulated service so that user has freedom to select what they want.
+- By using a bottom-up methodologies.
