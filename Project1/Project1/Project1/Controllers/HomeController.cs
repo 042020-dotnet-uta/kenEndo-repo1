@@ -194,7 +194,6 @@ namespace Project1.Controllers
             }
             _logger.LogError("modelState invalid");
             return RedirectToAction("SearchUserByName");
-        }
-     
+        }    
     }
 }

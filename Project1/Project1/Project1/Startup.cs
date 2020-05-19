@@ -40,7 +40,7 @@ namespace Project1
                 options.LoginPath = "/Welcome/Login";
                 options.Cookie.IsEssential = true;
                 options.SlidingExpiration = true;
-                options.ExpireTimeSpan = TimeSpan.FromSeconds(10);
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
             });
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
