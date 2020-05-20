@@ -139,9 +139,10 @@ namespace Project1.Controllers
             //Stores the order item into the database
             _serviceHome.ServPurchased(orderList);
             //deletes the stored cookies for item order
-            HttpContext.Session.Remove("listOfItems");
-            HttpContext.Session.Remove("currentOrder");
-            HttpContext.Session.Remove("selectedLocationId");
+            //HttpContext.Session.Remove("listOfItems");
+            //HttpContext.Session.Remove("currentOrder");
+            //HttpContext.Session.Remove("selectedLocationId");
+            HttpContext.Session.Clear();
             return View();
         }
         //Action to list all orders by location with filter

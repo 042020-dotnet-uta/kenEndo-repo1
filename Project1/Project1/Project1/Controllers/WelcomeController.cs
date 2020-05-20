@@ -59,7 +59,7 @@ namespace Project1.Controllers
                     _repoUserInfo.AddUserInfo(userinfo);
                     //logging successful registration information
                     _logger.LogInformation(string.Format("Adding new user to the database: {0}", JsonConvert.SerializeObject(userinfo)));
-                    //redirects user to the login page-----------------------------
+                    //redirects user to the login page
                     return RedirectToAction(nameof(Index));
                 }
                 catch (InvalidOperationException ioe)
