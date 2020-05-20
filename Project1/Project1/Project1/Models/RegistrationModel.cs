@@ -42,6 +42,8 @@ namespace Project1.Models
 		
 		private string _password; //password
 		[DisplayName("Password")]
+		[MinLength(6)]
+		[MaxLength(12)]
 		[DataType(DataType.Password)]
 		[Required(ErrorMessage = "This field is required.")]
 		public string password

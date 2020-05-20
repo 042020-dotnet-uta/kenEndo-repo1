@@ -8,8 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Project1.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Project1.Domain.IRepositories;
-using System.Threading;
 
 namespace Project1
 {

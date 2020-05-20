@@ -50,6 +50,7 @@ namespace Project1.Controllers
             HttpContext.Session.SetInt32("selectedLocationId", id);
             if (ModelState.IsValid)
             {
+                ViewData["error"] = HttpContext.Session.GetString("itemError");
                 _logger.LogError(string.Format("Location Id selected to view items: {0}",id));
                 //retrieve an instance of StoreItemModel from serviceHome to display list of items in view.
                 var storeItem = _serviceHome.ServItems(id);
@@ -70,7 +71,7 @@ namespace Project1.Controllers
                 //checks to make sure user selected order quantity is below the database inventory
                 if (quantity > _repoStoreItem.GetStoreItemByStoreItemId(id).StoreItemInventory.itemInventory)
                 {
-                    ViewData["error"] = "Selected amount is more than the store inventory, please try again";
+                    HttpContext.Session.SetString("itemError", "Selected amount is more than the store inventory, please try again");
                     //need to make it so that this can direct user to view with error message displayed
                     return RedirectToAction("Items", new { id = _repoStoreLocation.GetStoreLocationFromItem(id).StoreLocationId });
                 }
@@ -106,7 +107,7 @@ namespace Project1.Controllers
                     HttpContext.Session.SetComplexData("listOfItems", listOfItemsOrdered);
                 }
                 //erases the error message
-                ViewData["error"] = "";
+                HttpContext.Session.SetString("itemError", "Item added to the cart");
                 //direct user back to the store item view
                 return RedirectToAction("Items", new { id = _repoStoreLocation.GetStoreLocationFromUserOrder(orderId).StoreLocationId });
             }

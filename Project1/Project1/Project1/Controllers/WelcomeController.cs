@@ -15,15 +15,13 @@ namespace Project1.Controllers
     public class WelcomeController : Controller
     {
         private readonly ILogger<WelcomeController> _logger;
-        private readonly IRepoUserOrder _repository;
         private readonly IRepoUserInfo _repoUserInfo;
 
 
         public WelcomeController(ILogger<WelcomeController> logger
-            ,IRepoUserOrder repository, IRepoUserInfo repoUserInfo)
+            , IRepoUserInfo repoUserInfo)
         {
             _logger = logger;
-            _repository = repository;
             _repoUserInfo = repoUserInfo;
         }
         public IActionResult Logout()
@@ -45,7 +43,7 @@ namespace Project1.Controllers
             return View();
         }
         /// <summary>
-        ///  When user registers it direct them to this registration post action
+        ///  When user click register in welcome index, the action directs them to this registration post action
         ///  This action adds the new user to the database and returns exception if
         ///  there is a duplicate username available
         /// </summary>
@@ -57,9 +55,10 @@ namespace Project1.Controllers
             {
                 try
                 {
-                    _logger.LogError(string.Format("Adding new user to the database: {0}", JsonConvert.SerializeObject(userinfo)));
                     //function to add new user to the database
                     _repoUserInfo.AddUserInfo(userinfo);
+                    //logging successful registration information
+                    _logger.LogDebug(string.Format("Adding new user to the database: {0}", JsonConvert.SerializeObject(userinfo)));
                     //redirects user to the login page-----------------------------
                     return RedirectToAction(nameof(Index));
                 }
@@ -74,17 +73,17 @@ namespace Project1.Controllers
                 catch (Exception e)
                 {
                     _logger.LogError(e.Message);
-                    ViewData["Error"] = "There was an error, please try again.";
-                    return View();
                 }
             }
             else
             {
-                _logger.LogError("ModelState invalid");
                 //any issue with modelstate, a message will be thrown and user needs to repeat
-                ViewData["Error"] = "There was an error, please try again.";
-                return View();
+                _logger.LogError("ModelState invalid");
             }
+            //error message displayed on view if any exception is caught or invalid modelstate
+            ViewData["Error"] = "There was an error, please try again.";
+            return View();
+
         }
         public IActionResult Login()
         {
