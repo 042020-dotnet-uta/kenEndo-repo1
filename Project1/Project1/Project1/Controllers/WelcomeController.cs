@@ -58,7 +58,7 @@ namespace Project1.Controllers
                     //function to add new user to the database
                     _repoUserInfo.AddUserInfo(userinfo);
                     //logging successful registration information
-                    _logger.LogDebug(string.Format("Adding new user to the database: {0}", JsonConvert.SerializeObject(userinfo)));
+                    _logger.LogInformation(string.Format("Adding new user to the database: {0}", JsonConvert.SerializeObject(userinfo)));
                     //redirects user to the login page-----------------------------
                     return RedirectToAction(nameof(Index));
                 }
@@ -83,7 +83,6 @@ namespace Project1.Controllers
             //error message displayed on view if any exception is caught or invalid modelstate
             ViewData["Error"] = "There was an error, please try again.";
             return View();
-
         }
         public IActionResult Login()
         {

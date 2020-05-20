@@ -51,7 +51,7 @@ namespace Project1.Controllers
             if (ModelState.IsValid)
             {
                 ViewData["error"] = HttpContext.Session.GetString("itemError");
-                _logger.LogError(string.Format("Location Id selected to view items: {0}",id));
+                _logger.LogInformation(string.Format("Location Id selected to view items: {0}",id));
                 //retrieve an instance of StoreItemModel from serviceHome to display list of items in view.
                 var storeItem = _serviceHome.ServItems(id);
                 return View(storeItem);
@@ -67,17 +67,17 @@ namespace Project1.Controllers
         {
             if (ModelState.IsValid)
             {
-                _logger.LogDebug(string.Format("User added item id: {0} and quantity: {1} to order", id, quantity));
                 //checks to make sure user selected order quantity is below the database inventory
-                if (quantity > _repoStoreItem.GetStoreItemByStoreItemId(id).StoreItemInventory.itemInventory)
+                if (quantity > _repoStoreItem.GetStoreItemByStoreItemId(id).StoreItemInventory.itemInventory || quantity<=0)
                 {
-                    HttpContext.Session.SetString("itemError", "Selected amount is more than the store inventory, please try again");
+                    HttpContext.Session.SetString("itemError", "Selected amount is invalid, please try again");
                     //need to make it so that this can direct user to view with error message displayed
                     return RedirectToAction("Items", new { id = _repoStoreLocation.GetStoreLocationFromItem(id).StoreLocationId });
                 }
                 bool x = false;
                 if (HttpContext.Session.GetInt32("currentOrder") == null)
                 {
+                    _logger.LogInformation(string.Format("User added item id: {0} and quantity: {1} to order", id, quantity));
                     //adds user order to the database
                     var userName = User.FindFirstValue(ClaimTypes.Name);
                     _repoUserOrder.AddUserOrder(userName, id);
