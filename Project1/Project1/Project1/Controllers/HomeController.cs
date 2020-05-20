@@ -37,6 +37,7 @@ namespace Project1.Controllers
         }
         public IActionResult Index()
         {
+            ViewData["userlogged"] = User.FindFirstValue(ClaimTypes.Name);
             return View();
         }
         //Displays all locations using repoStoreLocation
@@ -126,6 +127,7 @@ namespace Project1.Controllers
             }
             else
             {
+                HttpContext.Session.SetString("itemError", "Selected amount is invalid, please try again");
                 _logger.LogError("empty cart");
                 return RedirectToAction("Items",new { id = HttpContext.Session.GetInt32("selectedLocationId") });
             }
