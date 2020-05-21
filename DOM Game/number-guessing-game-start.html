@@ -29,10 +29,10 @@
 
     <p>We have selected a random number between 1 and 100. See if you can guess it in 10 turns or fewer. We'll tell you if your guess was too high or too low.</p>
 
-    <div class="form">
+    <form onsubmit="return false">
       <label for="guessField">Enter a guess: </label><input type="text" id="guessField" class="guessField">
-      <input type="submit" value="Submit guess" class="guessSubmit" onclick="checkGuess();return false">
-    </div>
+      <input type="submit" value="Submit guess" class="guessSubmit" onclick="checkGuess()">
+    </form>
 
     <div class="resultParas">
       <p class="guesses"></p>
