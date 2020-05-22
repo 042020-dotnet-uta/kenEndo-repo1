@@ -25,13 +25,13 @@
   </head>
 
   <body>
-    <h1>Number guessing game</h1>
+    <h1 id="changeThis">Number guessing game</h1>
 
     <p>We have selected a random number between 1 and 100. See if you can guess it in 10 turns or fewer. We'll tell you if your guess was too high or too low.</p>
 
     <form onsubmit="return false">
-      <label for="guessField">Enter a guess: </label><input type="text" id="guessField" class="guessField">
-      <input type="submit" value="Submit guess" class="guessSubmit" onclick="checkGuess()">
+      <label for="guessField">Enter a guess: </label><input type="number" id="guessField" class="guessField">
+      <input type="submit" value="Submit guess" class="guessSubmit" onclick="validate()">
     </form>
 
     <div class="resultParas">
@@ -53,6 +53,20 @@
         let resetButton;
         guessField.focus();
 
+        function validate(){
+          if(guessField.value>100){
+            lastResult.textContent = 'Enter a number between 1 - 100';
+            lastResult.style.backgroundColor = 'red';
+            guessField.focus();
+          }else if(guessField.value<1){
+            lastResult.textContent = 'Enter a number between 1 - 100';
+            lastResult.style.backgroundColor = 'red';
+            guessField.focus();
+          }else{
+            return checkGuess();
+          }
+        }
+
         function checkGuess(){
             let userGuess = Number(guessField.value);
             if(guessCount ===1){
@@ -61,9 +75,10 @@
             guesses.textContent += userGuess + ' ';
 
             if(userGuess === randomNumber){
-                lastResult.textContent = 'Congratulations! You got it right!'
+                lastResult.textContent = 'Congratulations! You got it right!';
                 lastResult.style.backgroundColor = 'green';
                 lowOrHi.textContent = ' ';
+                document.querySelector('#changeThis').textContent = 'You guessed it!';
                 setGameOver();
             }else if(guessCount === 10){
                 lastResult.textContent = '!!!GAME OVER!!!';
@@ -78,8 +93,8 @@
                 }
             }
             guessCount++;
-            guessfield.value = '';
-            guessfield.focus();
+            guessField.value = '';
+            guessField.focus();
         }
 
         //guessSubmit.addEventListener('click',checkGuess);
@@ -94,6 +109,7 @@
         }
 
         function resetGame(){
+          document.querySelector('#changeThis').textContent = 'Number Guessing Game';
             guessCount = 1;
             const resetParas = document.querySelectorAll('.resultParas p');
             for(let i = 0; i < resetParas.length;i++){
