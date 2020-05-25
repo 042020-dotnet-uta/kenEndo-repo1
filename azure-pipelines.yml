@@ -1,0 +1,73 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+- stage: Build
+  jobs:
+  - job: build
+    steps:
+    - bash: |
+        cd MainProject
+        dotnet build
+    displayName: 'build'
+  - job: publish
+    steps:
+    - bash: dotnet publish MainProject -o release
+    - publish: $(System.DefaultWorkingDirectory)/Project1/Project1/release
+      artifact: AppRelease
+
+- stage: Test
+  jobs:
+  - job: test
+    steps:
+    - bash: |
+        cd /Project1/Project1/XUnitTestProject1
+        dotnet test
+    displayName: 'test'
+
+- stage: Coverage
+  jobs:
+  - job: coverage
+    steps:
+    - bash: |
+        export SONAR_SCANNER_VERSION=4.2.0.1873
+        export SONAR_SCANNER_HOME=$HOME/.sonar/sonar-scanner-$SONAR_SCANNER_VERSION-linux
+        curl --create-dirs -sSLo $HOME/.sonar/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_SCANNER_VERSION-linux.zip
+        unzip -o $HOME/.sonar/sonar-scanner.zip -d $HOME/.sonar/
+        export PATH=$SONAR_SCANNER_HOME/bin:$PATH
+        export SONAR_SCANNER_OPTS="-server"
+
+        cd /Project1/Project1/XUnitTestProject1
+        dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+        cd ..
+
+        sonar-scanner \
+        -Dsonar.organization=kenendo12 \
+        -Dsonar.projectKey=2e96ab127360a0dba65665c5528063036113d1b2 \
+        -Dsonar.sources=. \
+        -Dsonar.host.url=https://sonarcloud.io \
+        -Dsonar.login=5d003ea93e52289667b46d74b38ccd4fbec727c9
+        -Dsonar.cs.opencover.reportsPaths=Project1/Project1/XUnitTestProject1/coverage.opencover.xml
+    displayName: 'coverage'
+
+- stage: deploy
+  jobs:
+  - job: deploy
+    steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifactName: 'AppRelease'
+        targetPath: 'release'
+    - task: AzureRmWebAppDeployment@4
+      inputs:
+        ConnectionType: 'AzureRM'
+        azureSubscription: 'Azure subscription 1(add44282-5490-4beb-b46f-46afb591c142)'
+        appType: 'webAppLinux'
+        WebAppName: 'pipeline-app-jwl'
+        packageForLinux: '$(System.DefaultWorkingDirectory)/release'
+        RuntimeStack: 'DOTNETCORE|Latest'
+        StartupCommand: './citest'
